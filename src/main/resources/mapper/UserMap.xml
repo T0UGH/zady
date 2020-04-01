@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.neu.zady.mapper.UserMapper">
+
+    <select id="selectById" resultType="User">
+        SELECT id, `name`, email, password, avatar, default_project_id
+        FROM `user`
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByEmail" resultType="User">
+        SELECT id, `name`, email, password, avatar, default_project_id
+        FROM `user`
+        WHERE email = #{email}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO `user`(`name`, email, avatar, password)
+        VALUES(#{name}, #{email}, #{avatar}, #{password})
+    </insert>
+
+    <update id="update">
+        UPDATE `user`
+        <set>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar}
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name}
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>
