@@ -44,7 +44,7 @@ class UserServiceTest extends ZadyApplicationTests {
         user.setPassword("Neusoft123");
         //todo:DuplicateKeyException，邮箱是unique的这个要处理
         //todo:DataIntegrityViolationException，假如不该空为空，插入数据库会报错
-        user.setEmail("neusoft@neusoft.com");
+        user.setEmail("neusoft1@neusoft.com");
         userService.register(user);
     }
 

@@ -26,4 +26,6 @@ public class User {
     private Integer defaultProjectId;
 
     private Integer defaultSprintId;
+
+    private String token;
 }
