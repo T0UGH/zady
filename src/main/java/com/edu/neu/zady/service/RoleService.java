@@ -16,6 +16,17 @@ public interface RoleService {
      * */
     Role selectById(Integer id);
 
+
+    /**
+     * 根据id判断Role是否存在
+     * */
+    Boolean existById(Integer id);
+
+    /**
+     * 根据projectId和userId判断Role是否存在
+     * */
+    Boolean existByPIdAndUId(Integer projectId, Integer userId);
+
     /**
      * 根据项目的id(projectId)获取一个Role的列表(删除过的不算)
      * */
@@ -54,5 +65,5 @@ public interface RoleService {
     /**
      * 邀请人员加入项目
      * */
-    Integer inviteUser(Integer userId, Integer projectId, String role);
+    Integer inviteUser(Integer projectId, Integer userId,  String role);
 }

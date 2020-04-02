@@ -26,7 +26,6 @@ class RoleServiceTest extends ZadyApplicationTests {
     void inviteUser(){
         Integer projectId = 1;
         Integer userId = 9;
-        //todo: 因为删除字段的名称就叫删除导致的
         int affectRow = roleService.inviteUser(projectId, userId);
         Assertions.assertEquals(1, affectRow);
     }

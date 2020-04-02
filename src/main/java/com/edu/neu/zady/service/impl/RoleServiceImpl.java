@@ -7,7 +7,12 @@ import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.service.ProjectService;
 import com.edu.neu.zady.service.RoleService;
 import com.edu.neu.zady.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +21,9 @@ import java.util.List;
 
 @Transactional
 @Service
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl implements RoleService, ApplicationContextAware {
+
+    private Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
     @Value("${zady.default-invite-role}")
     private String defaultInviteRole;
@@ -30,10 +37,27 @@ public class RoleServiceImpl implements RoleService {
     @Resource
     UserService userService;
 
+    ApplicationContext applicationContext;
+
 
     @Override
     public Role selectById(Integer id) {
         return roleMapper.selectById(id);
+    }
+
+    @Override
+    public Boolean existById(Integer id) {
+        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Role::getId).eq(Role::getId, id);
+        return roleMapper.selectOne(queryWrapper) != null;
+    }
+
+    @Override
+    public Boolean existByPIdAndUId(Integer projectId, Integer userId) {
+        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Role::getId).eq(Role::getUserId, userId).eq(Role::getProjectId, projectId);
+        logger.debug(queryWrapper.toString());
+        return roleMapper.selectOne(queryWrapper) != null;
     }
 
     @Override
@@ -97,13 +121,22 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Integer inviteUser(Integer userId, Integer projectId, String role) {
+    public Integer inviteUser(Integer projectId, Integer userId, String role) {
+        //todo: 异常
+        //外键检测
         if(!projectService.existById(projectId)){
             throw new RuntimeException("给定Project不存在");
         }
 
+        //外键检测
         if(!userService.existById(userId)){
             throw new RuntimeException("给定User不存在");
+        }
+
+        //存在性检测，假如这个Role已经存在在数据库中，就不再执行下一步了。
+        RoleService roleService = this.applicationContext.getBean(RoleService.class);
+        if(roleService.existByPIdAndUId(projectId, userId)){
+            throw new RuntimeException("此Role已存在");
         }
 
         Role roleObj = new Role();
@@ -114,4 +147,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
