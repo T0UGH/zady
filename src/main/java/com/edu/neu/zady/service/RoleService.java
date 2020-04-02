@@ -22,6 +22,12 @@ public interface RoleService {
      * */
     Boolean existById(Integer id);
 
+
+    /**
+     * 根据projectId和userId获取Role
+     * */
+    Role selectByPIdAndUId(Integer projectId, Integer userId);
+
     /**
      * 根据projectId和userId判断Role是否存在
      * */
@@ -40,7 +46,7 @@ public interface RoleService {
     /**
      * 获取人员被邀请的项目
      * */
-    List<Role> selectJoinByUId(Integer userId);
+    List<Role> selectByUId(Integer userId);
 
     /**
      * 人员加入项目

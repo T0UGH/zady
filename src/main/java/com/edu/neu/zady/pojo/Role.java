@@ -20,4 +20,8 @@ public class Role {
 
     @TableLogic
     private Boolean flag;
+
+    public enum RoleEnum {
+        master, owner, developer, tester
+    }
 }

@@ -3,6 +3,7 @@ package com.edu.neu.zady.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.mapper.ProjectMapper;
 import com.edu.neu.zady.pojo.Project;
+import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.ProjectService;
 import com.edu.neu.zady.service.UserService;
 import org.springframework.stereotype.Service;
@@ -34,11 +35,24 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Integer insert(Project project, Integer currentUserId) {
 
-        if(!userService.existById(currentUserId)){
+        User user = userService.selectById(currentUserId);
+
+        //判断外键约素
+        if(user == null){
             throw new RuntimeException("这个用户不存在");
         }
+
         project.setMasterId(currentUserId);
-        return projectMapper.insert(project);
+
+
+        //主键填入user表的defaultProjectId属性
+        int rv = projectMapper.insert(project);
+        if(user.getDefaultProjectId() == null){
+            user.setDefaultProjectId(project.getId());
+            return userService.update(user);
+        }
+
+        return rv;
     }
 
     @Override

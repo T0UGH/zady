@@ -3,7 +3,9 @@ package com.edu.neu.zady.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.pojo.User;
+import com.edu.neu.zady.service.RoleService;
 import com.edu.neu.zady.service.TokenService;
 import com.edu.neu.zady.service.UserService;
 import com.edu.neu.zady.util.Encoder;
@@ -16,6 +18,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Resource
     UserService userService;
+
+    @Resource
+    RoleService roleService;
 
     @Override
     public User login(String email, String password) {
@@ -31,22 +36,22 @@ public class TokenServiceImpl implements TokenService {
         }
 
         Integer projectId = null;
-        if(user.getDefaultProjectId() != null){
-            //todo:从role表中，用projectId和userId取出对应的role
+        String role = null;
+        if((projectId = user.getDefaultProjectId()) != null){
+            Role roleObj = roleService.selectByPIdAndUId(projectId, user.getId());
+            role = roleObj.getRole();
         }
 
         JWTCreator.Builder builder = JWT.create();
+        //token第一部分：userId
         builder.withAudience(user.getId().toString());
 
+        //token第二部分：projectId
         if(projectId != null){
             builder.withAudience(projectId.toString());
         }
 
-        String role = null;
-        if(projectId != null){
-            //查询
-        }
-
+        //token第三部分：role
         if(role != null){
             builder.withAudience(role);
         }

@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService, ApplicationContextAware {
 
-    private Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
     @Value("${zady.default-invite-role}")
     private String defaultInviteRole;
@@ -53,6 +53,13 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     }
 
     @Override
+    public Role selectByPIdAndUId(Integer projectId, Integer userId) {
+        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Role::getUserId, userId).eq(Role::getProjectId, projectId).eq(Role::getInvite, false);
+        return roleMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public Boolean existByPIdAndUId(Integer projectId, Integer userId) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Role::getId).eq(Role::getUserId, userId).eq(Role::getProjectId, projectId);
@@ -75,7 +82,7 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     }
 
     @Override
-    public List<Role> selectJoinByUId(Integer userId) {
+    public List<Role> selectByUId(Integer userId) {
       LambdaQueryWrapper<Role> queryWrapper = new QueryWrapper<Role>().lambda();
         queryWrapper.eq(Role::getUserId, userId).eq(Role::getInvite, false);
         return roleMapper.selectList(queryWrapper);
