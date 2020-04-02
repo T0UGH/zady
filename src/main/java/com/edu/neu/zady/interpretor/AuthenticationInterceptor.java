@@ -10,10 +10,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
-//    RequestContextHandler
+    //RequestContextHandler
+    //todo: 各种异常的处理
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
 
         // 从 http 请求头中取出 token
@@ -43,9 +45,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 //取userId时无法解码直接报错
                 String userId;
                 try {
-                    userId = JWT.decode(token).getAudience().get(0);
+                    userId = JWT.decode(token).getClaim("userId").asString();
                 } catch (JWTDecodeException j) {
-                    throw new RuntimeException("无法取得有效的userId");
+                    throw new RuntimeException("无法解析userId");
+                }
+
+
+
+                if(userId == null){
+                    throw new RuntimeException("无法解析userId");
                 }
 
                 //将取得的userId存到requestHeader
@@ -56,10 +64,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
                     //取projectId时无法解码直接报错
                     String projectId;
+
                     try {
-                        projectId = JWT.decode(token).getAudience().get(1);
+                        projectId = JWT.decode(token).getClaim("projectId").asString();
                     } catch (JWTDecodeException j) {
-                        throw new RuntimeException("无法取得有效的projectId");
+                        throw new RuntimeException("无法解析projectId");
+                    }
+
+                    if(projectId == null){
+                        throw new RuntimeException("无法解析projectId");
                     }
 
                     //将取得的projectId存到requestHeader
@@ -74,9 +87,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         //从token中拿到role字符串
                         String role;
                         try {
-                            role = JWT.decode(token).getAudience().get(2);
+                            role = JWT.decode(token).getClaim("role").asString();
                         } catch (JWTDecodeException j) {
-                            throw new RuntimeException("无法取得有效的role");
+                            throw new RuntimeException("无法解析role");
+                        }
+
+                        if(role == null){
+                            throw new RuntimeException("无法解析role");
                         }
 
                         //遍历配置的每个Role，来鉴权，如果包含任意一个就返回true
@@ -85,7 +102,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                                 return true;
                             }
                         }
-                        throw new RuntimeException("您的权限过低，请联系master授权");
+                        throw new RuntimeException("您的智力过低，请终止此操作或者联系master授权");
 
                      //如果未配置Role，默认这个project的所有用户都可以访问
                     }else{

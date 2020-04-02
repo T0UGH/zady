@@ -12,6 +12,8 @@ import com.edu.neu.zady.util.Encoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -35,6 +37,8 @@ public class TokenServiceImpl implements TokenService {
             throw new RuntimeException("密码错误");
         }
 
+
+
         Integer projectId = null;
         String role = null;
         if((projectId = user.getDefaultProjectId()) != null){
@@ -43,18 +47,25 @@ public class TokenServiceImpl implements TokenService {
         }
 
         JWTCreator.Builder builder = JWT.create();
+        //todo: 将list传入这个方法中.
+
         //token第一部分：userId
-        builder.withAudience(user.getId().toString());
+        builder.withClaim("userId", user.getId().toString());
+
 
         //token第二部分：projectId
         if(projectId != null){
-            builder.withAudience(projectId.toString());
+            builder.withClaim("projectId", projectId.toString());
         }
 
         //token第三部分：role
         if(role != null){
-            builder.withAudience(role);
+            builder.withClaim("role", role);
         }
+
+
+
+
 
         String token =  builder.sign(Algorithm.none());
         user.setToken(token);
