@@ -50,7 +50,12 @@ class UserServiceTest extends ZadyApplicationTests {
 
     @Test
     void update(){
-
+        User user = new User();
+        user.setId(9);
+        user.setName("testBoy");
+        userService.update(user);
+        User dbUser = userService.selectById(9);
+        Assertions.assertEquals(user.getName(), dbUser.getName());
     }
 
     @AfterEach

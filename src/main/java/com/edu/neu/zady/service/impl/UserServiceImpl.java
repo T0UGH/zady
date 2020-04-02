@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(Encoder.string2Sha1(password));
         }
 
-        return userMapper.update(user);
+        return userMapper.updateById(user);
     }
 
     @Override
