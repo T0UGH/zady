@@ -31,7 +31,7 @@ public class Story {
 
     private Integer testerId;
 
-    private Boolean delete;
+    private Boolean flag;
 
     public enum Status {
         待导入, 待完成, 完成中, 待测试, 测试中, 已完成

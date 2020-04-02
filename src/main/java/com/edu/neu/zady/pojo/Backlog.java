@@ -19,7 +19,7 @@ public class Backlog {
 
     private Integer sprintId;
 
-    private Boolean delete;
+    private Boolean flag;
 
     public enum Status {
         未开始, 进行中, 已完成

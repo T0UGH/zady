@@ -1,10 +1,13 @@
 package com.edu.neu.zady.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 @Data
 public class Role {
 
+    @TableId
     private Integer id;
 
     private Integer projectId;
@@ -15,5 +18,6 @@ public class Role {
 
     private Boolean invite;
 
-    private Boolean delete;
+    @TableLogic
+    private Boolean flag;
 }

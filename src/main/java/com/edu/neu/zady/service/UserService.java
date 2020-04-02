@@ -5,9 +5,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
+
     User selectById(Integer id);
+
     User selectByEmail(String email);
+
     Integer update(User user);
+
     Integer register(User user);
-    Boolean testEmailUsed(String email);
+
+    Boolean existByEmail(String email);
+
+    Boolean existById(Integer id);
 }

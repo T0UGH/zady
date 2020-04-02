@@ -1,6 +1,7 @@
 package com.edu.neu.zady.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.mapper.UserMapper;
 import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.UserService;
@@ -30,9 +31,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User selectByEmail(String email) {
-        return userMapper.selectByEmail(email);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getEmail, email);
+        return userMapper.selectOne(queryWrapper);
     }
 
+    public Boolean existById(Integer id){
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.select(User::getId).eq(User::getId, id);
+        return userMapper.selectOne(lambdaQueryWrapper) != null;
+    }
 
     @Override
     public Integer update(User user) {
@@ -49,6 +57,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer register(User user) {
         logger.debug("Creating user: " + user.getEmail());
+
+        //密码进入数据库前加密
         String password = user.getPassword();
         String encryptPassword = Encoder.string2Sha1(password);
 
@@ -62,8 +72,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean testEmailUsed(String email) {
-        User user =  userMapper.selectByEmail(email);
+    public Boolean existByEmail(String email) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getEmail, email);
+        User user =  userMapper.selectOne(queryWrapper);
         return user != null && user.getId() != null && user.getEmail() != null;
     }
 

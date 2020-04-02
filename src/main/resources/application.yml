@@ -7,6 +7,7 @@ spring:
 
 zady:
   default-avatar: https://i.loli.net/2020/03/21/rtR3HPBNlMUjSAG.jpg
+  default-invite-role: developer,tester
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
@@ -19,5 +20,8 @@ mybatis-plus:
       id-type: auto
       table-underline: true
       update-strategy: not_null
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      logic-delete-field: flag
 
 
