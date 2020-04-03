@@ -1,4 +1,4 @@
-package com.edu.neu.zady.config;
+package com.edu.neu.zady.interpretor;
 
 import com.edu.neu.zady.pojo.DTO;
 import com.edu.neu.zady.util.DTOFactory;

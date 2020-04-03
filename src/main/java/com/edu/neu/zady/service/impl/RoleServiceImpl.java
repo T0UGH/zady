@@ -2,6 +2,8 @@ package com.edu.neu.zady.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.edu.neu.zady.exception.BadDataException;
+import com.edu.neu.zady.exception.DefaultException;
 import com.edu.neu.zady.mapper.RoleMapper;
 import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.service.ProjectService;
@@ -132,18 +134,18 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
         //todo: 异常
         //外键检测
         if(!projectService.existById(projectId)){
-            throw new RuntimeException("给定Project不存在");
+            throw new BadDataException("给定Project不存在");
         }
 
         //外键检测
         if(!userService.existById(userId)){
-            throw new RuntimeException("给定User不存在");
+            throw new BadDataException("给定User不存在");
         }
 
         //存在性检测，假如这个Role已经存在在数据库中，就不再执行下一步了。
         RoleService roleService = this.applicationContext.getBean(RoleService.class);
         if(roleService.existByPIdAndUId(projectId, userId)){
-            throw new RuntimeException("此Role已存在");
+            throw new BadDataException("此Role已存在");
         }
 
         Role roleObj = new Role();

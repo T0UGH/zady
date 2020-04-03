@@ -31,4 +31,32 @@ public class DTOFactory {
         dto.setMsg(msg);
         return dto;
     }
+
+    public static DTO unauthorizedDTO(String msg){
+        DTO dto = new DTO();
+        dto.setCode(HttpStatus.UNAUTHORIZED.value());
+        dto.setMsg(msg);
+        return dto;
+    }
+
+    public static DTO notFoundDTO(String msg){
+        DTO dto = new DTO();
+        dto.setCode(HttpStatus.NOT_FOUND.value());
+        dto.setMsg(msg);
+        return dto;
+    }
+
+    public static DTO DefaultErrorDTO(String msg){
+        DTO dto = new DTO();
+        dto.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        dto.setMsg(msg);
+        return dto;
+    }
+
+    public static DTO forbiddenDTO(String msg){
+        DTO dto = new DTO();
+        dto.setCode(HttpStatus.FORBIDDEN.value());
+        dto.setMsg(msg);
+        return dto;
+    }
 }

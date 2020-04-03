@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,6 +35,13 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getEmail, email);
         return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public List<User> selectByQueryStr(String queryStr) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(User::getEmail, queryStr).or().like(User::getName, queryStr);
+        return userMapper.selectList(queryWrapper);
     }
 
     public Boolean existById(Integer id){

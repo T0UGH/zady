@@ -8,6 +8,6 @@ public interface TokenService{
 
     User login(String email, String password);
 
-    User switchProject();
+    String switchProject(Integer userId, Integer projectId);
 }
 

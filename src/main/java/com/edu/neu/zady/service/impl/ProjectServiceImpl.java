@@ -1,6 +1,7 @@
 package com.edu.neu.zady.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.mapper.ProjectMapper;
 import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.pojo.User;
@@ -39,7 +40,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         //判断外键约素
         if(user == null){
-            throw new RuntimeException("这个用户不存在");
+            throw new BadDataException("这个用户不存在");
         }
 
         project.setMasterId(currentUserId);
@@ -64,7 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Integer updateOwnerId(Integer projectId, Integer ownerId) {
 
         if(!userService.existById(ownerId)){
-            throw new RuntimeException("这个User不存在");
+            throw new BadDataException("这个User不存在");
         }
 
         Project project = new Project();
@@ -87,7 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectMapper.selectById(projectId);
         if(project == null){
             //todo: 处理异常
-            throw new RuntimeException("这个project不存在");
+            throw new BadDataException("这个project不存在");
         }
         Integer sprintNum = project.getSprintNum();
         sprintNum += 1;
@@ -100,7 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectMapper.selectById(projectId);
         if(project == null){
             //todo: 处理异常
-            throw new RuntimeException("这个project不存在");
+            throw new BadDataException("这个project不存在");
         }
         Integer sprintNum = project.getSprintNum();
         sprintNum += 1;

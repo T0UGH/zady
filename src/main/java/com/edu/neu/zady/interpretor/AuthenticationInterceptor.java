@@ -3,6 +3,8 @@ package com.edu.neu.zady.interpretor;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.edu.neu.zady.annotation.Auth;
+import com.edu.neu.zady.exception.DefaultException;
+import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.pojo.Role;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -39,7 +41,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
                 //没有token直接报错
                 if (token == null) {
-                    throw new RuntimeException("无token，请重新登录");
+                    throw new NoAuthException("无token，请重新登录");
                 }
 
                 //取userId时无法解码直接报错
@@ -47,13 +49,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 try {
                     userId = JWT.decode(token).getClaim("userId").asString();
                 } catch (JWTDecodeException j) {
-                    throw new RuntimeException("无法解析userId");
+                    throw new DefaultException("无法解析userId");
                 }
 
 
 
                 if(userId == null){
-                    throw new RuntimeException("无法解析userId");
+                    throw new NoAuthException("无法解析userId");
                 }
 
                 //将取得的userId存到requestHeader
@@ -68,11 +70,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     try {
                         projectId = JWT.decode(token).getClaim("projectId").asString();
                     } catch (JWTDecodeException j) {
-                        throw new RuntimeException("无法解析projectId");
+                        throw new DefaultException("无法解析projectId");
                     }
 
                     if(projectId == null){
-                        throw new RuntimeException("无法解析projectId");
+                        throw new NoAuthException("无法解析projectId");
                     }
 
                     //将取得的projectId存到requestHeader
@@ -89,11 +91,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         try {
                             role = JWT.decode(token).getClaim("role").asString();
                         } catch (JWTDecodeException j) {
-                            throw new RuntimeException("无法解析role");
+                            throw new DefaultException("无法解析role");
                         }
 
                         if(role == null){
-                            throw new RuntimeException("无法解析role");
+                            throw new NoAuthException("无法解析role");
                         }
 
                         //遍历配置的每个Role，来鉴权，如果包含任意一个就返回true
@@ -102,7 +104,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                                 return true;
                             }
                         }
-                        throw new RuntimeException("您的智力过低，请终止此操作或者联系master授权");
+                        throw new NoAuthException("您的智力过低，请终止此操作或者联系master授权");
 
                      //如果未配置Role，默认这个project的所有用户都可以访问
                     }else{
