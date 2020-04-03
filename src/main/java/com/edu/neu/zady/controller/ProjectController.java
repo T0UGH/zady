@@ -1,7 +1,6 @@
 package com.edu.neu.zady.controller;
 
 import com.edu.neu.zady.annotation.Auth;
-import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.exception.NotFoundException;
 import com.edu.neu.zady.exception.DefaultException;
 import com.edu.neu.zady.pojo.Project;

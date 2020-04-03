@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.exception.DefaultException;
 import com.edu.neu.zady.mapper.RoleMapper;
+import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.pojo.Role;
+import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.ProjectService;
 import com.edu.neu.zady.service.RoleService;
 import com.edu.neu.zady.service.UserService;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -72,8 +75,47 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     @Override
     public List<Role> selectByPId(Integer projectId) {
         LambdaQueryWrapper<Role> queryWrapper = new QueryWrapper<Role>().lambda();
-        queryWrapper.eq(Role::getProjectId, projectId);
+        queryWrapper.eq(Role::getProjectId, projectId).eq(Role::getInvite, false);
         return roleMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<User> selectUsersByPId(Integer projectId) {
+        RoleService roleService = this.applicationContext.getBean(RoleService.class);
+        List<Role> roleList = roleService.selectByPId(projectId);
+        List<User> userList = new ArrayList<>();
+        for (Role roleObj : roleList) {
+            User user = userService.selectById(roleObj.getUserId());
+            if(user == null){
+                throw new DefaultException("不存在的user");
+            }
+            user.setRole(roleObj);
+            userList.add(user);
+        }
+        return userList;
+    }
+
+    @Override
+    public List<Role> selectInviteByPId(Integer projectId) {
+        LambdaQueryWrapper<Role> queryWrapper = new QueryWrapper<Role>().lambda();
+        queryWrapper.eq(Role::getProjectId, projectId).eq(Role::getInvite, true);
+        return roleMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<User> selectInviteUsersByPId(Integer projectId) {
+        RoleService roleService = this.applicationContext.getBean(RoleService.class);
+        List<Role> roleList = roleService.selectInviteByPId(projectId);
+        List<User> userList = new ArrayList<>();
+        for (Role roleObj : roleList) {
+            User user = userService.selectById(roleObj.getUserId());
+            if(user == null){
+                throw new DefaultException("查询不存在的user");
+            }
+            user.setRole(roleObj);
+            userList.add(user);
+        }
+        return userList;
     }
 
     @Override
@@ -84,10 +126,42 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     }
 
     @Override
+    public List<Project> selectInviteProjectsByUId(Integer userId) {
+        RoleService roleService = this.applicationContext.getBean(RoleService.class);
+        List<Role> roleList = roleService.selectInviteByUId(userId);
+        List<Project> projectList = new ArrayList<>();
+        for (Role roleObj : roleList) {
+            Project project = projectService.selectById(roleObj.getProjectId());
+            if(project == null){
+                throw new DefaultException("不存在的Project");
+            }
+            project.setRole(roleObj);
+            projectList.add(project);
+        }
+        return projectList;
+    }
+
+    @Override
     public List<Role> selectByUId(Integer userId) {
       LambdaQueryWrapper<Role> queryWrapper = new QueryWrapper<Role>().lambda();
         queryWrapper.eq(Role::getUserId, userId).eq(Role::getInvite, false);
         return roleMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Project> selectProjectsByUId(Integer userId) {
+        RoleService roleService = this.applicationContext.getBean(RoleService.class);
+        List<Role> roleList = roleService.selectByUId(userId);
+        List<Project> projectList = new ArrayList<>();
+        for (Role roleObj : roleList) {
+            Project project = projectService.selectById(roleObj.getProjectId());
+            if(project == null){
+                throw new DefaultException("请求了不存在的Project");
+            }
+            project.setRole(roleObj);
+            projectList.add(project);
+        }
+        return projectList;
     }
 
     @Override

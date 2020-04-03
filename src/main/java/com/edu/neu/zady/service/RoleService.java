@@ -1,6 +1,8 @@
 package com.edu.neu.zady.service;
 
+import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.pojo.Role;
+import com.edu.neu.zady.pojo.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,15 +40,32 @@ public interface RoleService {
      * */
     List<Role> selectByPId(Integer projectId);
 
+    List<User> selectUsersByPId(Integer projectId);
+
+    List<Role> selectInviteByPId(Integer projectId);
+
+    List<User> selectInviteUsersByPId(Integer projectId);
+
     /**
-     * 获取人员加入过的项目列表（删除过的不算）
+     * 获取人员加入过的角色列表（删除过的不算）
      * */
     List<Role> selectInviteByUId(Integer userId);
 
     /**
-     * 获取人员被邀请的项目
+     * 获取人员加入过的项目列表（删除过的不算）
+     * */
+    List<Project> selectInviteProjectsByUId(Integer userId);
+
+    /**
+     * 获取人员被邀请的角色
      * */
     List<Role> selectByUId(Integer userId);
+
+    /**
+     * 获取人员被邀请的项目
+     * */
+    List<Project> selectProjectsByUId(Integer userId);
+
 
     /**
      * 人员加入项目
@@ -72,4 +91,6 @@ public interface RoleService {
      * 邀请人员加入项目
      * */
     Integer inviteUser(Integer projectId, Integer userId,  String role);
+
+
 }

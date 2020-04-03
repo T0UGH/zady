@@ -1,5 +1,6 @@
 package com.edu.neu.zady.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
@@ -27,4 +28,7 @@ public class Project {
     private Integer sprintNum;
 
     private Integer currentSprintId;
+
+    @TableField(exist = false)
+    private Role role;
 }
