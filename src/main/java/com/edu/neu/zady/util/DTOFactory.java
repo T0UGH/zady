@@ -16,6 +16,13 @@ public class DTOFactory {
         dto.setMsg("请求成功");
         return dto;
     }
+    public static DTO okDTO(String msg, Object body){
+        DTO dto = new DTO();
+        dto.setCode(202);
+        dto.setMsg(msg);
+        dto.setBody(body);
+        return dto;
+    }
 
     public static DTO unKnownErrorDTO(String msg){
         DTO dto = new DTO();
