@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 public @interface Auth {
     boolean needLogin() default true;
     boolean needProject() default true;
-
+    boolean sameUser() default false;
+    boolean sameProject() default false;
     Role.RoleEnum[] role() default {};
 }

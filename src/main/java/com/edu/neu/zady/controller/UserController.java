@@ -46,22 +46,15 @@ public class UserController {
     @Auth(needProject = false)
     @GetMapping("/users")
     public List<User> getUsers(String queryStr){
+
         return userService.selectByQueryStr(queryStr);
     }
 
 
     //只有用户自己可以修改自己的基本信息
-    @Auth(needProject = false)
+    @Auth(needProject = false, sameUser = true)
     @PutMapping("/user")
     public String updateUser(User user){
-
-        Integer currUserId = (Integer) RequestContextHolder
-                .currentRequestAttributes().getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
-
-        //这里要进一步鉴权，因为不这样不行。
-        if(currUserId != null && !currUserId.equals(user.getId())){
-            throw new NoAuthException("无权更新");
-        }
 
         if(userService.update(user) == 0){
             throw new DefaultException("更新失败");

@@ -22,6 +22,6 @@ public class Role {
     private Boolean flag;
 
     public enum RoleEnum {
-        master, owner, developer, tester
+        MASTER, OWNER, DEVELOPER, TESTER
     }
 }

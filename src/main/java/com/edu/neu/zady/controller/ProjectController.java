@@ -29,20 +29,15 @@ public class ProjectController {
         }
     }
 
-    @Auth(role = {Role.RoleEnum.master})
+    @Auth(sameProject = true, role = {Role.RoleEnum.MASTER})
     @PutMapping("/project")
     public void updateProject(@RequestBody Project project){
-        Integer currProjectId = (Integer) RequestContextHolder
-                .currentRequestAttributes().getAttribute("projectId", RequestAttributes.SCOPE_REQUEST);
-        if(currProjectId == null || !currProjectId.equals(project.getId())){
-            throw new NoAuthException("无权更改");
-        }
         if(projectService.update(project) == 0){
             throw new DefaultException("更改失败");
         }
     }
 
-    @Auth(role = {Role.RoleEnum.master})
+    @Auth(needProject = false)
     @PutMapping("/project/{projectId}")
     public Project getProject(@PathVariable Integer projectId){
         Project project = projectService.selectById(projectId);

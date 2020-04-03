@@ -61,6 +61,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 //将取得的userId存到requestHeader
                 request.setAttribute("userId", userId);
 
+                //如果需要是同一个user则执行验证
+                if(auth.sameUser()){
+                    String paramUserId = request.getParameter("userId");
+                    if(!userId.equals(paramUserId)){
+                        throw new NoAuthException("您无权操作其他用户");
+                    }
+                }
+
                 //如果还需要携带projectId，则继续验证
                 if(auth.needProject()){
 
@@ -79,6 +87,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
                     //将取得的projectId存到requestHeader
                     request.setAttribute("projectId", projectId);
+
+                    //验证是否需要同一项目
+                    if(auth.sameProject()){
+                        String paramProjectId = request.getParameter("projectId");
+                        if(!projectId.equals(paramProjectId)){
+                            throw new NoAuthException("您无权操作其他项目");
+                        }
+                    }
 
                     //继续验证Role的信息
                     Role.RoleEnum[] configRoles = auth.role();
