@@ -17,11 +17,11 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/user")
-    public DTO register(@RequestBody User user){
+    public String register(@RequestBody User user){
         if(userService.register(user) == 0){
             throw new RuntimeException("注册失败");
         }else{
-            return DTOFactory.okDTO();
+            return "注册成功";
         }
     }
 }

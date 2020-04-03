@@ -18,12 +18,12 @@ public class TokenController {
     private TokenService tokenService;
 
     @PostMapping("/token")
-    public DTO login(String email, String password){
+    public User login(String email, String password){
         User user = tokenService.login(email, password);
         if(user == null){
             throw new RuntimeException("登陆失败");
         }else {
-            return DTOFactory.okDTO(user);
+            return user;
         }
     }
 
