@@ -12,7 +12,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.List;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
@@ -62,10 +61,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 request.setAttribute("userId", userId);
 
                 //如果需要是同一个user则执行验证
+                //取不到这个参数也不用验证
                 if(auth.sameUser()){
                     String paramUserId = request.getParameter("userId");
-                    if(!userId.equals(paramUserId)){
-                        throw new NoAuthException("您无权操作其他用户");
+                    if(paramUserId != null){
+                        if(!userId.equals(paramUserId)){
+                            throw new NoAuthException("您无权操作其他用户");
+                        }
                     }
                 }
 
@@ -91,8 +93,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     //验证是否需要同一项目
                     if(auth.sameProject()){
                         String paramProjectId = request.getParameter("projectId");
-                        if(!projectId.equals(paramProjectId)){
-                            throw new NoAuthException("您无权操作其他项目");
+                        if(paramProjectId != null){
+                            if(!projectId.equals(paramProjectId)){
+                                throw new NoAuthException("您无权操作其他项目");
+                            }
                         }
                     }
 

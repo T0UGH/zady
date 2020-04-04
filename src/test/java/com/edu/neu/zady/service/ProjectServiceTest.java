@@ -37,7 +37,7 @@ class ProjectServiceTest extends ZadyApplicationTests {
     @Test
     void update(){
         Project project = new Project();
-        project.setId(4);
+        project.setProjectId(4);
         project.setName("测试项目0405");
         project.setGithubUrl("https://github.com/T0UGH/watersoup");
         projectService.update(project);

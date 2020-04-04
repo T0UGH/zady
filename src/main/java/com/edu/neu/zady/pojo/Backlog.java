@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Backlog {
 
-    private Integer id;
+    private Integer backlogId;
 
     private Integer projectId;
 

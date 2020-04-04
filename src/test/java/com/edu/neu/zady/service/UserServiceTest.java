@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.Resource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class UserServiceTest extends ZadyApplicationTests {
 
     @Resource
@@ -51,7 +49,7 @@ class UserServiceTest extends ZadyApplicationTests {
     @Test
     void update(){
         User user = new User();
-        user.setId(9);
+        user.setUserId(9);
         user.setName("testBoy");
         userService.update(user);
         User dbUser = userService.selectById(9);

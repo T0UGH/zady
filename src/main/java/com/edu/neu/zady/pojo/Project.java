@@ -2,6 +2,7 @@ package com.edu.neu.zady.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
@@ -11,7 +12,8 @@ import javax.validation.constraints.NotBlank;
 public class Project {
 
     @TableId
-    private Integer id;
+    @JsonProperty(value = "projectId")
+    private Integer projectId;
 
     @NotBlank
     private String name;

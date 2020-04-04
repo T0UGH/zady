@@ -19,8 +19,8 @@ class UserTest {
     @Test
     void getId() {
         User user = new User();
-        user.setId(1);
-        assertEquals(java.util.Optional.of(1),user.getId());
+        user.setUserId(1);
+        assertEquals(java.util.Optional.of(1),user.getUserId());
     }
 
     @Test

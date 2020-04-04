@@ -53,7 +53,7 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     @Override
     public Boolean existById(Integer id) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(Role::getId).eq(Role::getId, id);
+        queryWrapper.select(Role::getRoleId).eq(Role::getRoleId, id);
         return roleMapper.selectOne(queryWrapper) != null;
     }
 
@@ -67,7 +67,7 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     @Override
     public Boolean existByPIdAndUId(Integer projectId, Integer userId) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(Role::getId).eq(Role::getUserId, userId).eq(Role::getProjectId, projectId);
+        queryWrapper.select(Role::getRoleId).eq(Role::getUserId, userId).eq(Role::getProjectId, projectId);
         logger.debug(queryWrapper.toString());
         return roleMapper.selectOne(queryWrapper) != null;
     }

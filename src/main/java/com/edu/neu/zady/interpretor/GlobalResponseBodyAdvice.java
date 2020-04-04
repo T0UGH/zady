@@ -5,6 +5,7 @@ import com.edu.neu.zady.util.DTOFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -18,7 +19,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
-        return MappingJackson2HttpMessageConverter.class.isAssignableFrom(aClass);
+        return MappingJackson2HttpMessageConverter.class.isAssignableFrom(aClass) || StringHttpMessageConverter.class.isAssignableFrom(aClass);
     }
 
     @Override

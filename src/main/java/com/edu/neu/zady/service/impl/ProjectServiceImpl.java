@@ -37,7 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Boolean existById(Integer id) {
         LambdaQueryWrapper<Project> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(Project::getId).eq(Project::getId, id);
+        queryWrapper.select(Project::getProjectId).eq(Project::getProjectId, id);
         projectMapper.selectOne(queryWrapper);
         return projectMapper.selectById(id) != null;
     }
@@ -58,13 +58,13 @@ public class ProjectServiceImpl implements ProjectService {
         //主键填入user表的defaultProjectId属性
         int rv = projectMapper.insert(project);
         if(user.getDefaultProjectId() == null){
-            user.setDefaultProjectId(project.getId());
+            user.setDefaultProjectId(project.getProjectId());
             return userService.update(user);
         }
 
         //向role表中插入一条记录
         Role roleObj = new Role();
-        roleObj.setProjectId(project.getId());
+        roleObj.setProjectId(project.getProjectId());
         roleObj.setUserId(currentUserId);
         roleObj.setInvite(false);
         roleObj.setRole(defaultMasterRole);
@@ -82,7 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Integer updateCurrentSprintId(Integer projectId, Integer currentSprintId) {
         //todo: 要检测currentSprintId是否存在
         Project project = new Project();
-        project.setId(projectId);
+        project.setProjectId(projectId);
         project.setCurrentSprintId(currentSprintId);
         return null;
     }

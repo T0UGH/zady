@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class Bornout {
 
-    private Integer id;
+    private Integer bornoutId;
 
     private Integer sprintId;
 

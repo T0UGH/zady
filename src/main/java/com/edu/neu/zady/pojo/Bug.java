@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Bug {
 
-    private Integer id;
+    private Integer bugId;
 
     private Integer projectId;
 

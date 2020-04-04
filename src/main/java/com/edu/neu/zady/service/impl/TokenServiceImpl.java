@@ -1,8 +1,5 @@
 package com.edu.neu.zady.service.impl;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.exception.NotFoundException;
 import com.edu.neu.zady.pojo.Role;
@@ -30,7 +27,7 @@ public class TokenServiceImpl implements TokenService {
     public User login(String email, String password) {
         User user = userService.selectByEmail(email);
 
-        if(user == null || user.getId() == null || user.getPassword() == null){
+        if(user == null || user.getUserId() == null || user.getPassword() == null){
             throw new NotFoundException("用户不存在");
         }
 
@@ -43,14 +40,15 @@ public class TokenServiceImpl implements TokenService {
         Integer projectId;
         String role = null;
         if((projectId = user.getDefaultProjectId()) != null){
-            Role roleObj = roleService.selectByPIdAndUId(projectId, user.getId());
+            Role roleObj = roleService.selectByPIdAndUId(projectId, user.getUserId());
             if(roleObj != null){
-                projectId = null;
                 role = roleObj.getRole();
+            }else{
+                projectId = null;
             }
         }
 
-        String token = TokenGenerator.generate(user.getId(), projectId, role);
+        String token = TokenGenerator.generate(user.getUserId(), projectId, role);
         user.setToken(token);
 
         return user;

@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     public Boolean existById(Integer id){
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.select(User::getId).eq(User::getId, id);
+        lambdaQueryWrapper.select(User::getUserId).eq(User::getUserId, id);
         return userMapper.selectOne(lambdaQueryWrapper) != null;
     }
 
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getEmail, email);
         User user =  userMapper.selectOne(queryWrapper);
-        return user != null && user.getId() != null && user.getEmail() != null;
+        return user != null && user.getUserId() != null && user.getEmail() != null;
     }
 
 }

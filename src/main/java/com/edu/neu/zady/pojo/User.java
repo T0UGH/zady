@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 public class User {
 
     @TableId
-    private Integer id;
+    private Integer userId;
 
     @NotBlank
     private String name;

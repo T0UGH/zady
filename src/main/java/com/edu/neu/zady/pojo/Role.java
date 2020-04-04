@@ -8,7 +8,7 @@ import lombok.Data;
 public class Role {
 
     @TableId
-    private Integer id;
+    private Integer roleId;
 
     private Integer projectId;
 
@@ -22,6 +22,6 @@ public class Role {
     private Boolean flag;
 
     public enum RoleEnum {
-        MASTER, OWNER, DEVELOPER, TESTER
+        master, owner, developer, tester
     }
 }

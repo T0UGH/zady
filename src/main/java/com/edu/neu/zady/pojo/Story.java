@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class Story {
 
-    private Integer id;
+    private Integer storyId;
 
     private Integer projectId;
 

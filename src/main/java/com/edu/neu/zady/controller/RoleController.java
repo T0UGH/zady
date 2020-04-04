@@ -23,7 +23,7 @@ public class RoleController {
     RoleService roleService;
 
     @PostMapping("/role")
-    @Auth(role = {Role.RoleEnum.MASTER}, sameProject = true)
+    @Auth(role = {Role.RoleEnum.master}, sameProject = true)
     public void inviteUser(Integer userId, Integer projectId, String role){
         if(!RoleValidator.validate(role)){
             throw new BadDataException("角色信息格式错误");
@@ -34,9 +34,9 @@ public class RoleController {
         }
     }
 
-    @PutMapping("/invite/{projectId}")
+    @PutMapping("/invite")
     @Auth(needProject = false)
-    public void acceptInvite(@PathVariable Integer projectId){
+    public void acceptInvite(Integer projectId){
         Integer currUserId = (Integer) RequestContextHolder
                 .currentRequestAttributes().getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
 
@@ -50,7 +50,7 @@ public class RoleController {
     }
 
     @PutMapping("/role")
-    @Auth(role = {Role.RoleEnum.MASTER}, sameProject = true)
+    @Auth(role = {Role.RoleEnum.master}, sameProject = true)
     public void updateRole(Integer projectId, Integer userId, String role){
        if( roleService.updateByPIdAndUId(projectId, userId, role) == 0){
            throw new DefaultException("更新失败");
@@ -58,7 +58,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/role")
-    @Auth(role = {Role.RoleEnum.MASTER}, sameProject = true)
+    @Auth(role = {Role.RoleEnum.master}, sameProject = true)
     public void deleteRole(Integer projectId, Integer userId){
         if(roleService.deleteUser(projectId, userId) == 0){
             throw new DefaultException("删除失败");
@@ -75,26 +75,26 @@ public class RoleController {
         return role;
     }
 
-    @GetMapping("/userProjects")
+    @GetMapping("/user/projects")
     @Auth(needProject = false, sameUser = true)
     public List<Project> getProjectsByUser(Integer userId){
         return roleService.selectProjectsByUId(userId);
     }
 
-    @GetMapping("/userInvites")
+    @GetMapping("/user/invites")
     @Auth(needProject = false, sameUser = true)
     public List<Project> getInviteProjectsByUser(Integer userId){
         return roleService.selectInviteProjectsByUId(userId);
     }
 
-    @GetMapping("/projectUsers")
-    @Auth(sameProject = true, role = {Role.RoleEnum.MASTER})
+    @GetMapping("/project/users")
+    @Auth(sameProject = true, role = {Role.RoleEnum.master})
     public List<User> getUsersByProject(Integer projectId){
         return roleService.selectUsersByPId(projectId);
     }
 
-    @GetMapping("/projectInvites")
-    @Auth(sameProject = true, role = {Role.RoleEnum.MASTER})
+    @GetMapping("/project/invites")
+    @Auth(sameProject = true, role = {Role.RoleEnum.master})
     public List<User> getInviteUsersByProject(Integer projectId){
         return roleService.selectInviteUsersByPId(projectId);
     }

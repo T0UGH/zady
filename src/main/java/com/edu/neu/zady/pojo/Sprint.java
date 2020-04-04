@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class Sprint {
 
-    private Integer id;
+    private Integer sprintId;
 
     private Integer projectId;
 

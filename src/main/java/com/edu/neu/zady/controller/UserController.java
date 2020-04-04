@@ -7,8 +7,6 @@ import com.edu.neu.zady.exception.NotFoundException;
 import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.UserService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,6 +17,7 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @ResponseBody
     @PostMapping("/user")
     public String register(@RequestBody User user){
         if(userService.register(user) == 0){
@@ -51,6 +50,7 @@ public class UserController {
     }
 
 
+    @ResponseBody
     //只有用户自己可以修改自己的基本信息
     @Auth(needProject = false, sameUser = true)
     @PutMapping("/user")

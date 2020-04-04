@@ -7,8 +7,8 @@ spring:
 
 zady:
   default-avatar: https://i.loli.net/2020/03/21/rtR3HPBNlMUjSAG.jpg
-  default-invite-role: DEVELOPER,TESTER
-  default-master-role: MASTER,OWNER,DEVELOPER,TESTER
+  default-invite-role: developer,tester
+  default-master-role: master,owner,developer,tester
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
