@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(BadDataException.class)
+    @ExceptionHandler(NotFoundException.class)
     public DTO handleNotFoundException(NotFoundException e){
         String msg = e.getMessage();
         logger.error(msg, e);
@@ -45,8 +45,8 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(BadDataException.class)
-    public DTO handleNotFoundException(NoAuthException e){
+    @ExceptionHandler(NoAuthException.class)
+    public DTO handleNoAuthException(NoAuthException e){
         String msg = e.getMessage();
         logger.error(msg, e);
         if (msg == null || msg.equals("")) {
@@ -57,8 +57,8 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(BadDataException.class)
-    public DTO handleNotFoundException(DefaultException e){
+    @ExceptionHandler(DefaultException.class)
+    public DTO handleDefaultException(DefaultException e){
         String msg = e.getMessage();
         logger.error(msg, e);
         if (msg == null || msg.equals("")) {
