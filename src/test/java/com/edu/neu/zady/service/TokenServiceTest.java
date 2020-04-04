@@ -32,4 +32,10 @@ class TokenServiceTest extends ZadyApplicationTests {
         Assertions.assertNotNull(user.getToken());
         System.out.println(user.getToken());
     }
+
+    @Test
+    void switchUser(){
+        String token = tokenService.switchProject(9, 3);
+        Assertions.assertNotNull(token);
+    }
 }

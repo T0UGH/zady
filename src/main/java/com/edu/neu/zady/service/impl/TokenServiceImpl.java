@@ -44,7 +44,10 @@ public class TokenServiceImpl implements TokenService {
         String role = null;
         if((projectId = user.getDefaultProjectId()) != null){
             Role roleObj = roleService.selectByPIdAndUId(projectId, user.getId());
-            role = roleObj.getRole();
+            if(roleObj != null){
+                projectId = null;
+                role = roleObj.getRole();
+            }
         }
 
         String token = TokenGenerator.generate(user.getId(), projectId, role);

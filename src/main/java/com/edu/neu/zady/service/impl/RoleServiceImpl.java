@@ -184,7 +184,10 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
         queryRole.setUserId(userId);
         queryRole.setProjectId(projectId);
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>(queryRole);
-        return roleMapper.delete(queryWrapper);
+        roleMapper.delete(queryWrapper);
+
+        //todo: 删除之后，万一正好是user的defaultProject怎么办
+        return 0;
     }
 
     @Override
