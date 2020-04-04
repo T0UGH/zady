@@ -11,9 +11,11 @@ import com.edu.neu.zady.service.RoleService;
 import com.edu.neu.zady.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+@Transactional
 @Service
 public class ProjectServiceImpl implements ProjectService {
 

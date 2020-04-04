@@ -26,6 +26,6 @@ public class ParamHolder {
     public static Boolean sameUser(Integer userId){
         return Integer.valueOf((String) Objects.requireNonNull(RequestContextHolder
                 .currentRequestAttributes()
-                .getAttribute("projectId", RequestAttributes.SCOPE_REQUEST))).equals(userId);
+                .getAttribute("userId", RequestAttributes.SCOPE_REQUEST))).equals(userId);
     }
 }

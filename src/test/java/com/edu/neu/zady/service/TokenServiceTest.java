@@ -25,7 +25,7 @@ class TokenServiceTest extends ZadyApplicationTests {
 
     @Test
     void login(){
-        String email = "neusoft@neusoft.com";
+        String email = "m.thbtvmd@gelqo.int";
         String password = "Neusoft123";
         User user = tokenService.login(email, password);
         Assertions.assertNotNull(user);

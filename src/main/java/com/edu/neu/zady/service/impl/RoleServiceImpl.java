@@ -167,6 +167,7 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     @Override
     public Integer joinProject(Integer projectId, Integer userId) {
 
+        //先更新role中的invite为false
         Role queryRole = new Role();
         queryRole.setUserId(userId);
         queryRole.setProjectId(projectId);
@@ -174,7 +175,19 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
         Role updateRole = new Role();
         updateRole.setInvite(false);
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>(queryRole);
-        return roleMapper.update(updateRole, queryWrapper);
+        int rv =  roleMapper.update(updateRole, queryWrapper);
+
+        //然后检测一下用不用更新这个用户的defaultProjectId
+        if(rv != 0){
+            User dbUser = userService.selectById(userId);
+            if(dbUser.getDefaultProjectId() == null) {
+                User user = new User();
+                user.setUserId(userId);
+                user.setDefaultProjectId(projectId);
+                return userService.update(user);
+            }
+        }
+        return rv;
     }
 
     @Override
@@ -184,10 +197,11 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
         queryRole.setUserId(userId);
         queryRole.setProjectId(projectId);
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>(queryRole);
-        roleMapper.delete(queryWrapper);
-
-        //todo: 删除之后，万一正好是user的defaultProject怎么办
-        return 0;
+        if(roleMapper.delete(queryWrapper) == 0 ){
+            return 0;
+        }else{
+            return userService.updateDefaultProjectIdToNull(userId);
+        }
     }
 
     @Override

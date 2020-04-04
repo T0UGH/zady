@@ -10,10 +10,12 @@ import com.edu.neu.zady.service.UserService;
 import com.edu.neu.zady.util.Encoder;
 import com.edu.neu.zady.util.TokenGenerator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
 
+@Transactional
 @Service
 public class TokenServiceImpl implements TokenService {
 
@@ -34,8 +36,6 @@ public class TokenServiceImpl implements TokenService {
         if(!Encoder.string2Sha1(password).equals(user.getPassword())){
             throw new BadDataException("密码错误");
         }
-
-
 
         Integer projectId;
         String role = null;

@@ -2,13 +2,12 @@ package com.edu.neu.zady.controller;
 
 import com.edu.neu.zady.annotation.Auth;
 import com.edu.neu.zady.exception.DefaultException;
+import com.edu.neu.zady.pojo.DTO;
 import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.TokenService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
+import com.edu.neu.zady.util.DTOFactory;
+import com.edu.neu.zady.util.ParamHolder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -18,24 +17,23 @@ public class TokenController {
     private TokenService tokenService;
 
     @PostMapping("/token")
-    public User login(String email, String password){
-        User user = tokenService.login(email, password);
-        if(user == null){
+    public User login(@RequestBody User user){
+        User rUser = tokenService.login(user.getEmail(), user.getPassword());
+        if(rUser == null){
             throw new DefaultException("登陆失败");
         }else {
-            return user;
+            return rUser;
         }
     }
 
-    @PutMapping("/token")
+    @PutMapping("/token/{projectId}")
     @Auth(needProject = false)
-    public String switchProject(Integer projectId){
-        Integer currUserId = (Integer) RequestContextHolder
-                .currentRequestAttributes().getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
+    public DTO switchProject(@PathVariable Integer projectId){
+        Integer currUserId = ParamHolder.getCurrentUserId();
         String token = tokenService.switchProject(currUserId, projectId);
         if(token == null) {
             throw new DefaultException("切换失败，生成空密钥");
         }
-        return token;
+        return DTOFactory.okDTO(token);
     }
 }

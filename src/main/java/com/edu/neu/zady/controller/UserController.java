@@ -6,6 +6,7 @@ import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.exception.NotFoundException;
 import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.UserService;
+import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,7 +18,9 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @ResponseBody
+    /**
+     * 注册
+     * */
     @PostMapping("/user")
     public String register(@RequestBody User user){
         if(userService.register(user) == 0){
@@ -27,11 +30,17 @@ public class UserController {
         }
     }
 
+    /**
+     * 检测邮箱是否被使用了
+     * */
     @GetMapping("/user/email/{email}")
     public Boolean existByEmail(@PathVariable String email){
         return userService.existByEmail(email);
     }
 
+    /**
+     * 读取某个用户的信息
+     * */
     @Auth(needProject = false)
     @GetMapping("/user/{userId}")
     public User getUser(@PathVariable Integer userId){
@@ -42,19 +51,27 @@ public class UserController {
         return user;
     }
 
+    /**
+     * 通过某个关键词搜索用户
+     * */
     @Auth(needProject = false)
-    @GetMapping("/users")
-    public List<User> getUsers(String queryStr){
+    @GetMapping("/users/{queryStr}")
+    public List<User> getUsers(@PathVariable String queryStr){
 
         return userService.selectByQueryStr(queryStr);
     }
 
 
-    @ResponseBody
-    //只有用户自己可以修改自己的基本信息
+    /**
+     * 用户修改自己的基本信息
+     * */
     @Auth(needProject = false, sameUser = true)
     @PutMapping("/user")
-    public String updateUser(User user){
+    public String updateUser(@RequestBody User user){
+
+        if(!ParamHolder.sameUser(user.getUserId())){
+            throw new NoAuthException("不能修改其他用户的个人信息");
+        }
 
         if(userService.update(user) == 0){
             throw new DefaultException("更新失败");

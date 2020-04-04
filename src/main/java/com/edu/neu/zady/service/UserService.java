@@ -21,4 +21,6 @@ public interface UserService {
     Boolean existByEmail(String email);
 
     Boolean existById(Integer id);
+
+    Integer updateDefaultProjectIdToNull(Integer id);
 }
