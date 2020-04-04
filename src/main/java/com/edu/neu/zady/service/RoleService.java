@@ -93,4 +93,5 @@ public interface RoleService {
     Integer inviteUser(Integer projectId, Integer userId,  String role);
 
 
+    Integer insert(Role role);
 }

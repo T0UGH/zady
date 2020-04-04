@@ -229,6 +229,11 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
         return roleMapper.insert(roleObj);
     }
 
+    @Override
+    public Integer insert(Role role) {
+        return roleMapper.insert(role);
+    }
+
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

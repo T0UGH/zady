@@ -36,14 +36,6 @@ public class ProjectController {
         }
     }
 
-    @Auth(sameProject = true, role = {Role.RoleEnum.MASTER})
-    @PutMapping("/project/{projectId}/owner")
-    public void updateProjectOwner(@PathVariable Integer projectId, Integer ownerId){
-        if(projectService.updateOwnerId(projectId, ownerId) == 0){
-            throw new DefaultException("更改失败");
-        }
-    }
-
     @Auth(needProject = false)
     @GetMapping("/project/{projectId}")
     public Project getProject(@PathVariable Integer projectId){

@@ -21,8 +21,6 @@ public class Project {
     @URL
     private String githubUrl;
 
-    private Integer ownerId;
-
     private Integer masterId;
 
     private Integer sprintNum;

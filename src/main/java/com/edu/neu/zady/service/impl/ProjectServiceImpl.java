@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.mapper.ProjectMapper;
 import com.edu.neu.zady.pojo.Project;
+import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.pojo.User;
 import com.edu.neu.zady.service.ProjectService;
+import com.edu.neu.zady.service.RoleService;
 import com.edu.neu.zady.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +22,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Resource
     UserService userService;
+
+    @Resource
+    RoleService roleService;
+
+    @Value("${zady.default-master-role}")
+    private String defaultMasterRole;
 
     @Override
     public Project selectById(Integer id) {
@@ -53,7 +62,14 @@ public class ProjectServiceImpl implements ProjectService {
             return userService.update(user);
         }
 
-        return rv;
+        //向role表中插入一条记录
+        Role roleObj = new Role();
+        roleObj.setProjectId(project.getId());
+        roleObj.setUserId(currentUserId);
+        roleObj.setInvite(false);
+        roleObj.setRole(defaultMasterRole);
+        return roleService.insert(roleObj);
+
     }
 
     @Override
@@ -61,18 +77,6 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.updateById(project);
     }
 
-    @Override
-    public Integer updateOwnerId(Integer projectId, Integer ownerId) {
-
-        if(!userService.existById(ownerId)){
-            throw new BadDataException("这个User不存在");
-        }
-
-        Project project = new Project();
-        project.setId(projectId);
-        project.setOwnerId(ownerId);
-        return projectMapper.updateById(project);
-    }
 
     @Override
     public Integer updateCurrentSprintId(Integer projectId, Integer currentSprintId) {

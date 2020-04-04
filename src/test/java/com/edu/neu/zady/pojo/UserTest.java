@@ -20,7 +20,7 @@ class UserTest {
     void getId() {
         User user = new User();
         user.setId(1);
-        assertEquals(1,user.getId());
+        assertEquals(java.util.Optional.of(1),user.getId());
     }
 
     @Test

@@ -14,8 +14,6 @@ public interface ProjectService {
 
     Integer update(Project project);
 
-    Integer updateOwnerId(Integer projectId, Integer ownerId);
-
     Integer updateCurrentSprintId(Integer projectId, Integer currentSprintId);
 
     Integer addSprintNum(Integer projectId);
