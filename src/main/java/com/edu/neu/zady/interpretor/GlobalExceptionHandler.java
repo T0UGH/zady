@@ -8,6 +8,8 @@ import com.edu.neu.zady.pojo.DTO;
 import com.edu.neu.zady.util.DTOFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,13 +25,41 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler({BadDataException.class, SQLIntegrityConstraintViolationException.class})
+    @ExceptionHandler({BadDataException.class})
     public DTO handleBadDataException(BadDataException e){
         String msg = e.getMessage();
         logger.error(msg, e);
         if (msg == null || msg.equals("")) {
             msg = "未知错误";
         }
+        return DTOFactory.forbiddenDTO(msg);
+    }
+
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({DataIntegrityViolationException.class,})
+    public DTO handleDataIntegrityViolationException(DataIntegrityViolationException e){
+        String msg = "插入或删除操作缺少必要字段";
+        logger.error(msg, e);
+        return DTOFactory.forbiddenDTO(msg);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
+    public DTO handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
+        String msg = "违反唯一约束条件";
+        logger.error(msg, e);
+        return DTOFactory.forbiddenDTO(msg);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({DuplicateKeyException.class})
+    public DTO handleDuplicateKeyException(DuplicateKeyException e){
+        String msg = "违反唯一条件约束";
+        logger.error(msg, e);
         return DTOFactory.forbiddenDTO(msg);
     }
 
@@ -40,7 +70,7 @@ public class GlobalExceptionHandler {
         String msg = e.getMessage();
         logger.error(msg, e);
         if (msg == null || msg.equals("")) {
-            msg = "未知错误";
+            msg = "资源未找到";
         }
         return DTOFactory.notFoundDTO(msg);
     }
@@ -52,7 +82,7 @@ public class GlobalExceptionHandler {
         String msg = e.getMessage();
         logger.error(msg, e);
         if (msg == null || msg.equals("")) {
-            msg = "未知错误";
+            msg = "无权限";
         }
         return DTOFactory.unauthorizedDTO(msg);
     }
@@ -64,7 +94,7 @@ public class GlobalExceptionHandler {
         String msg = e.getMessage();
         logger.error(msg, e);
         if (msg == null || msg.equals("")) {
-            msg = "未知错误";
+            msg = "其他错误";
         }
         return DTOFactory.unKnownErrorDTO(msg);
     }

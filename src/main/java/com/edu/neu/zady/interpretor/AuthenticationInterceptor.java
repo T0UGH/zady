@@ -15,8 +15,6 @@ import java.lang.reflect.Method;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
-    //RequestContextHandler
-    //todo: 各种异常的处理
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
 
         // 从 http 请求头中取出 token

@@ -222,7 +222,6 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
 
     @Override
     public Integer inviteUser(Integer projectId, Integer userId, String role) {
-        //todo: 异常
         //外键检测
         if(!projectService.existById(projectId)){
             throw new BadDataException("给定Project不存在");

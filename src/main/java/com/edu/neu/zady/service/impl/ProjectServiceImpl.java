@@ -93,7 +93,6 @@ public class ProjectServiceImpl implements ProjectService {
     public Integer addSprintNum(Integer projectId) {
         Project project = projectMapper.selectById(projectId);
         if(project == null){
-            //todo: 处理异常
             throw new BadDataException("这个project不存在");
         }
         Integer sprintNum = project.getSprintNum();
@@ -106,7 +105,6 @@ public class ProjectServiceImpl implements ProjectService {
     public Integer updateCurrentSprintIdAndAddSprintNum(Integer projectId, Integer currentSprintId) {
         Project project = projectMapper.selectById(projectId);
         if(project == null){
-            //todo: 处理异常
             throw new BadDataException("这个project不存在");
         }
         Integer sprintNum = project.getSprintNum();

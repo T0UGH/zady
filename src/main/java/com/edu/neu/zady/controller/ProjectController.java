@@ -27,9 +27,6 @@ public class ProjectController {
         }
     }
 
-    //todo：requestBody怎么接收不到
-    //todo: getRequestParams
-    //todo: 统一projectId和id，请统一
     @Auth(sameProject = true, role = {Role.RoleEnum.master})
     @PutMapping("/project")
     public void updateProject(@RequestBody Project project){
