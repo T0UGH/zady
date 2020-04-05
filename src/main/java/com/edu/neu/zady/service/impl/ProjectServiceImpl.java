@@ -100,7 +100,11 @@ public class ProjectServiceImpl implements ProjectService {
             throw new BadDataException("这个project不存在");
         }
         Integer sprintNum = project.getSprintNum();
-        sprintNum += 1;
+        if(sprintNum == null){
+            sprintNum = 1;
+        }else{
+            sprintNum += 1;
+        }
         project.setSprintNum(sprintNum);
         return projectMapper.updateById(project);
     }
