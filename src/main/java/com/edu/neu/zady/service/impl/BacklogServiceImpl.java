@@ -73,12 +73,22 @@ public class BacklogServiceImpl implements BacklogService {
 
     @Override
     public Integer insert(Backlog backlog) {
+        //检查外键约束
+        if(!projectService.existById(backlog.getProjectId())){
+            throw new BadDataException("对应project" + backlog.getProjectId() + "不存在");
+        }
+
         return backlogMapper.insert(backlog);
     }
 
     @Override
     public Integer update(Backlog backlog) {
-        return backlogMapper.updateById(backlog);
+        Backlog uBacklog = new Backlog();
+        uBacklog.setBacklogId(backlog.getBacklogId());
+        uBacklog.setName(backlog.getName());
+        uBacklog.setNote(backlog.getNote());
+        uBacklog.setPriority(backlog.getPriority());
+        return backlogMapper.updateById(uBacklog);
     }
 
     @Override

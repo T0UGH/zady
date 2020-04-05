@@ -82,7 +82,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Integer updateCurrentSprintId(Integer projectId, Integer currentSprintId) {
-        //todo: 要检测currentSprintId是否存在
         Project project = new Project();
         project.setProjectId(projectId);
         project.setCurrentSprintId(currentSprintId);
