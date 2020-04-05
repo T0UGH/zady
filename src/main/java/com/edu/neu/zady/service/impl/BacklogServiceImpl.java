@@ -8,6 +8,7 @@ import com.edu.neu.zady.pojo.Backlog;
 import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.service.BacklogService;
 import com.edu.neu.zady.service.ProjectService;
+import com.edu.neu.zady.service.SprintService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,9 @@ public class BacklogServiceImpl implements BacklogService {
     @Resource
     ProjectService projectService;
 
+    @Resource
+    SprintService sprintService;
+
     @Override
     public Backlog selectById(Integer backlogId) {
         return backlogMapper.selectById(backlogId);
@@ -31,7 +35,10 @@ public class BacklogServiceImpl implements BacklogService {
 
     @Override
     public List<Backlog> selectBySprintId(Integer sprintId) {
-        //todo: 先判断存不存在，等写完SprintService后加上
+
+        if(!sprintService.existById(sprintId)){
+            throw new BadDataException("对应sprint" + sprintId + "不存在");
+        }
 
         LambdaQueryWrapper<Backlog> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Backlog::getSprintId, sprintId);

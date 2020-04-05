@@ -76,7 +76,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Integer update(Project project) {
-        return projectMapper.updateById(project);
+        Project uProject = new Project();
+        uProject.setProjectId(project.getProjectId());
+        uProject.setName(project.getName());
+        uProject.setNote(project.getNote());
+        uProject.setGithubUrl(project.getGithubUrl());
+        return projectMapper.updateById(uProject);
     }
 
 

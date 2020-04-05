@@ -10,6 +10,8 @@ public interface SprintService {
 
     Sprint selectById(Integer sprintId);
 
+    Boolean existById(Integer sprintId);
+
     List<Sprint> selectByProjectId(Integer projectId);
 
     Sprint selectCurrentByProjectId(Integer projectId);

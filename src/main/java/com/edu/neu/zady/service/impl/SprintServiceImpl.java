@@ -32,6 +32,13 @@ public class SprintServiceImpl implements SprintService {
     }
 
     @Override
+    public Boolean existById(Integer sprintId) {
+        LambdaQueryWrapper<Sprint> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.select(Sprint::getSprintId).eq(Sprint::getSprintId, sprintId);
+        return sprintMapper.selectOne(lambdaQueryWrapper) != null;
+    }
+
+    @Override
     public List<Sprint> selectByProjectId(Integer projectId) {
         if(!projectService.existById(projectId)){
             throw new BadDataException("对应项目不存在");
@@ -92,7 +99,6 @@ public class SprintServiceImpl implements SprintService {
 
     @Override
     public Integer update(Sprint sprint) {
-        //todo: 其他service的update屏蔽一些不可更新的字段
         Sprint updateSprint = new Sprint();
         updateSprint.setSprintId(sprint.getSprintId());
         updateSprint.setName(sprint.getName());
