@@ -1,10 +1,13 @@
 package com.edu.neu.zady.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 @Data
 public class Backlog {
 
+    @TableId
     private Integer backlogId;
 
     private Integer projectId;
@@ -19,6 +22,7 @@ public class Backlog {
 
     private Integer sprintId;
 
+    @TableLogic
     private Boolean flag;
 
     public enum Status {
