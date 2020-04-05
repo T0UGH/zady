@@ -85,6 +85,11 @@ public class BacklogServiceImpl implements BacklogService {
             throw new BadDataException("对应project" + backlog.getProjectId() + "不存在");
         }
 
+        if(!sprintService.existById(backlog.getSprintId())){
+            throw new BadDataException("对应sprint" + backlog.getSprintId() + "不存在");
+        }
+
+        backlog.setStatus(Backlog.Status.未开始);
         return backlogMapper.insert(backlog);
     }
 

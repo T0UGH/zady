@@ -69,7 +69,7 @@ public class SprintServiceImpl implements SprintService {
         Project project;
 
         //检测project外键约束
-        if(sprint.getProjectId() != null || (project = projectService.selectById(sprint.getProjectId())) == null){
+        if(sprint.getProjectId() == null || (project = projectService.selectById(sprint.getProjectId())) == null){
             throw new BadDataException("对应项目不存在，请修改项目Id字段");
         }
 
@@ -87,7 +87,7 @@ public class SprintServiceImpl implements SprintService {
         //设置轮数为project.sprintNum + 1
         sprint.setRoundId(project.getSprintNum() + 1);
 
-        int rv = sprintMapper.updateById(sprint);
+        int rv = sprintMapper.insert(sprint);
 
         //更新project的currentSprintId为它
         if(projectService.updateCurrentSprintIdAndAddSprintNum(sprint.getProjectId(), sprint.getSprintId()) == 0){
