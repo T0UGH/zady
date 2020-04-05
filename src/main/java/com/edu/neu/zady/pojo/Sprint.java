@@ -1,5 +1,6 @@
 package com.edu.neu.zady.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.Date;
 @Data
 public class Sprint {
 
+    @TableId
     private Integer sprintId;
 
     private Integer projectId;

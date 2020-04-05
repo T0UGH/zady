@@ -19,4 +19,6 @@ public interface ProjectService {
     Integer addSprintNum(Integer projectId);
 
     Integer updateCurrentSprintIdAndAddSprintNum(Integer projectId, Integer currentSprintId);
+
+    Integer updateCurrentSprintIdToNull(Integer projectId);
 }
