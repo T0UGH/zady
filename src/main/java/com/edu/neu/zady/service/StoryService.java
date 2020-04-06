@@ -1,12 +1,16 @@
 package com.edu.neu.zady.service;
 
 import com.edu.neu.zady.pojo.Story;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface StoryService {
 
     Story selectById(Integer storyId);
+
+    Boolean existById(Integer storyId);
 
     List<Story> selectBySprintId(Integer sprintId);
 
@@ -34,8 +38,8 @@ public interface StoryService {
 
     Integer testReturn(Integer storyId, Integer userId);
 
-    Integer passTest(Integer storyId, Integer userId, Integer useHours);
+    Integer testPass(Integer storyId, Integer userId, Integer useHours);
 
-    Integer notPassTest(Integer storyId, Integer userId, Integer useHours);
+    Integer testNotPass(Integer storyId, Integer userId, Integer useHours);
 
 }

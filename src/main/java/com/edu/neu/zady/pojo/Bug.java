@@ -1,10 +1,13 @@
 package com.edu.neu.zady.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 @Data
 public class Bug {
 
+    @TableId
     private Integer bugId;
 
     private Integer projectId;
@@ -28,6 +31,9 @@ public class Bug {
     private Integer testerId;
 
     private Integer developerId;
+
+    @TableLogic
+    private Boolean flag;
 
     public enum Level{
         A, B, C, D

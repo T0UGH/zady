@@ -4,16 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.mapper.StoryMapper;
 import com.edu.neu.zady.pojo.Backlog;
+import com.edu.neu.zady.pojo.Bug;
 import com.edu.neu.zady.pojo.Story;
-import com.edu.neu.zady.service.BacklogService;
-import com.edu.neu.zady.service.SprintService;
-import com.edu.neu.zady.service.StoryService;
-import com.edu.neu.zady.service.UserService;
+import com.edu.neu.zady.service.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
+@Transactional
+@Service
 public class StoryServiceImpl implements StoryService {
 
     @Resource
@@ -28,11 +30,23 @@ public class StoryServiceImpl implements StoryService {
     @Resource
     UserService userService;
 
+    @Resource
+    BugService bugService;
+
     @Override
     public Story selectById(Integer storyId) {
 
         return storyMapper.selectById(storyId);
 
+    }
+
+    @Override
+    public Boolean existById(Integer storyId) {
+
+        LambdaQueryWrapper<Story> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.select(Story::getStoryId).eq(Story::getStoryId, storyId);
+
+        return storyMapper.selectOne(lambdaQueryWrapper) != null;
     }
 
     @Override
@@ -204,7 +218,7 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]不存在");
         }
 
-        if(!story.getDeveloperId().equals(userId)){
+        if(story.getDeveloperId() == null || !story.getDeveloperId().equals(userId)){
             throw new BadDataException("给定user[" + userId + "]无权执行撤销领取操作");
         }
 
@@ -222,12 +236,20 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]不存在");
         }
 
-        if(!story.getDeveloperId().equals(userId)){
+        if(story.getDeveloperId() == null || !story.getDeveloperId().equals(userId)){
             throw new BadDataException("给定user[" + userId + "]无权执行开发完成操作");
         }
 
         if(!story.getStatus().equals(Story.Status.完成中)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持开发完成操作");
+        }
+
+        //判断有没有bug，只有没有bug或者所有的bug全都是待复核或已完成状态，才能提交
+        List<Bug> bugList = bugService.selectByStoryId(storyId);
+        for (Bug bug:bugList) {
+            if(!bug.getStatus().equals(Bug.Status.待复核) && !bug.getStatus().equals(Bug.Status.已完成)){
+                throw new BadDataException("给定story[" + storyId + "]存在未提交修改的BUG，无法修改为待测试状态");
+            }
         }
 
         story.setStatus(Story.Status.待测试);
@@ -253,6 +275,10 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]状态不支持测试人员领取操作");
         }
 
+        if(story.getTesterId() != null && !story.getTesterId().equals(userId)){
+            throw new BadDataException("给定story[" + storyId + "]只能由测试人员[" + story.getTesterId() + "]领取");
+        }
+
         story.setTesterId(userId);
         story.setStatus(Story.Status.测试中);
 
@@ -269,7 +295,7 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]不存在");
         }
 
-        if(!story.getTesterId().equals(userId)){
+        if(story.getTesterId() == null || !story.getTesterId().equals(userId)){
             throw new BadDataException("给定user[" + userId + "]无权执行撤销领取操作");
         }
 
@@ -281,7 +307,7 @@ public class StoryServiceImpl implements StoryService {
 
     }
 
-    public Integer passTest(Integer storyId, Integer userId, Integer useHours){
+    public Integer testPass(Integer storyId, Integer userId, Integer useHours){
 
         Story story = storyMapper.selectById(storyId);
 
@@ -289,12 +315,19 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]不存在");
         }
 
-        if(!story.getTesterId().equals(userId)){
+        if(story.getTesterId() == null || !story.getTesterId().equals(userId)){
             throw new BadDataException("给定user[" + userId + "]无权执行通过测试操作");
         }
 
         if(!story.getStatus().equals(Story.Status.测试中)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持通过测试操作");
+        }
+
+        List<Bug> bugList = bugService.selectByStoryId(storyId);
+        for (Bug bug:bugList) {
+            if(!bug.getStatus().equals(Bug.Status.已完成)){
+                throw new BadDataException("给定story[" + storyId + "]存在未提交修改的BUG，无法修改为待测试状态");
+            }
         }
 
         story.setStatus(Story.Status.已完成);
@@ -305,7 +338,7 @@ public class StoryServiceImpl implements StoryService {
 
     }
 
-    public Integer notPassTest(Integer storyId, Integer userId, Integer useHours){
+    public Integer testNotPass(Integer storyId, Integer userId, Integer useHours){
 
         Story story = storyMapper.selectById(storyId);
 
@@ -313,12 +346,19 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]不存在");
         }
 
-        if(!story.getTesterId().equals(userId)){
+        if(story.getTesterId() == null || !story.getTesterId().equals(userId)){
             throw new BadDataException("给定user[" + userId + "]无权执行未通过测试操作");
         }
 
         if(!story.getStatus().equals(Story.Status.测试中)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持未通过测试操作");
+        }
+
+        List<Bug> bugList = bugService.selectByStoryId(storyId);
+        for (Bug bug:bugList) {
+            if(!bug.getStatus().equals(Bug.Status.已完成) && !bug.getStatus().equals(Bug.Status.待确认)){
+                throw new BadDataException("给定story[" + storyId + "]存在未提交修改的BUG，无法修改为待测试状态");
+            }
         }
 
         story.setStatus(Story.Status.完成中);
