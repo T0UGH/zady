@@ -10,6 +10,8 @@ public interface BacklogService {
 
     Backlog selectById(Integer backlogId);
 
+    Boolean existById(Integer backlogId);
+
     List<Backlog> selectBySprintId(Integer sprintId);
 
     List<Backlog> selectByProjectId(Integer projectId);

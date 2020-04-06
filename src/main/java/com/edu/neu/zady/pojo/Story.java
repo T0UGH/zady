@@ -1,5 +1,7 @@
 package com.edu.neu.zady.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.Date;
 @Data
 public class Story {
 
+    @TableId
     private Integer storyId;
 
     private Integer projectId;
@@ -31,6 +34,7 @@ public class Story {
 
     private Integer testerId;
 
+    @TableLogic
     private Boolean flag;
 
     public enum Status {

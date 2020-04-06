@@ -34,6 +34,13 @@ public class BacklogServiceImpl implements BacklogService {
     }
 
     @Override
+    public Boolean existById(Integer backlogId) {
+        LambdaQueryWrapper<Backlog> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.select(Backlog::getBacklogId).eq(Backlog::getBacklogId, backlogId);
+        return backlogMapper.selectOne(lambdaQueryWrapper) != null;
+    }
+
+    @Override
     public List<Backlog> selectBySprintId(Integer sprintId) {
 
         if(!sprintService.existById(sprintId)){
