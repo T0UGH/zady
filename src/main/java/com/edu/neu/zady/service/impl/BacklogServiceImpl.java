@@ -54,6 +54,26 @@ public class BacklogServiceImpl implements BacklogService {
     }
 
     @Override
+    public List<Backlog> selectBySprintIdAndStatus(Integer sprintId, String statusStr) {
+
+        if(!sprintService.existById(sprintId)){
+            throw new BadDataException("对应sprint" + sprintId + "不存在");
+        }
+
+        Backlog.Status status;
+        try{
+            status = Backlog.Status.valueOf(statusStr);
+        }catch (IllegalArgumentException e){
+            throw new BadDataException("对应状态字段不合法");
+        }
+
+        LambdaQueryWrapper<Backlog> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Backlog::getSprintId, sprintId).eq(Backlog::getStatus, status);
+
+        return backlogMapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
     public List<Backlog> selectByProjectId(Integer projectId) {
 
         if(!projectService.existById(projectId)){

@@ -39,8 +39,8 @@ public class ProjectController {
     }
 
     @Auth(needProject = false)
-    @GetMapping("/project")
-    public Project getProject(Integer projectId){
+    @GetMapping("/project/{projectId}")
+    public Project getProject(@PathVariable Integer projectId){
         Project project = projectService.selectById(projectId);
         if(project == null){
             throw new NotFoundException("无此工程");

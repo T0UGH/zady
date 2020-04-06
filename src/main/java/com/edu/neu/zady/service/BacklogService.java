@@ -14,6 +14,8 @@ public interface BacklogService {
 
     List<Backlog> selectBySprintId(Integer sprintId);
 
+    List<Backlog> selectBySprintIdAndStatus(Integer sprintId, String statusStr);
+
     List<Backlog> selectByProjectId(Integer projectId);
 
     List<Backlog> selectByProjectIdAndStatus(Integer projectId, String statusStr);
