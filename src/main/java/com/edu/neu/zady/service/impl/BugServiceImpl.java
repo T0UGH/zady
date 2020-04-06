@@ -199,7 +199,7 @@ public class BugServiceImpl implements BugService {
     }
 
     //开发人员确认非错
-    public Integer developConfirmNot(Integer bugId, Integer userId){
+    public Integer developNotConfirm(Integer bugId, Integer userId){
 
         Bug bug = bugMapper.selectById(bugId);
 
@@ -209,6 +209,17 @@ public class BugServiceImpl implements BugService {
 
         if(bug.getDeveloperId() == null || !bug.getDeveloperId().equals(userId)){
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
+        }
+
+        Integer storyId = bug.getStoryId();
+        Story story;
+
+        if(storyId == null || (story = storyService.selectById(storyId)) == null){
+            throw new BadDataException("给定story[" + storyId + "]不存在");
+        }
+
+        if(!story.getStatus().equals(Story.Status.完成中)){
+            throw new BadDataException("给定story[" + storyId + "]不处于完成中状态，无法确认非错");
         }
 
         if(!bug.getStatus().equals(Bug.Status.待确认)){
@@ -221,7 +232,7 @@ public class BugServiceImpl implements BugService {
     }
 
     //开发人员确认有错
-    public Integer developConfirmOk(Integer bugId, Integer userId){
+    public Integer developConfirm(Integer bugId, Integer userId){
 
         Bug bug = bugMapper.selectById(bugId);
 
@@ -233,8 +244,19 @@ public class BugServiceImpl implements BugService {
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
         }
 
+        Integer storyId = bug.getStoryId();
+        Story story;
+
+        if(storyId == null || (story = storyService.selectById(storyId)) == null){
+            throw new BadDataException("给定story[" + storyId + "]不存在");
+        }
+
+        if(!story.getStatus().equals(Story.Status.完成中)){
+            throw new BadDataException("给定story[" + storyId + "]不处于完成中状态，无法确认有错");
+        }
+
         if(!bug.getStatus().equals(Bug.Status.待确认)){
-            throw new BadDataException("给定bug[" + bugId + "]状态无法执行确认为错操作");
+            throw new BadDataException("给定bug[" + bugId + "]状态无法执行确认有错操作");
         }
 
         bug.setStatus(Bug.Status.待修改);
@@ -253,6 +275,17 @@ public class BugServiceImpl implements BugService {
 
         if(bug.getDeveloperId() == null || !bug.getDeveloperId().equals(userId)){
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
+        }
+
+        Integer storyId = bug.getStoryId();
+        Story story;
+
+        if(storyId == null || (story = storyService.selectById(storyId)) == null){
+            throw new BadDataException("给定story[" + storyId + "]不存在");
+        }
+
+        if(!story.getStatus().equals(Story.Status.完成中)){
+            throw new BadDataException("给定story[" + storyId + "]不处于完成中状态，无法提交BUG的修改");
         }
 
         if(!bug.getStatus().equals(Bug.Status.待修改)){
@@ -277,6 +310,17 @@ public class BugServiceImpl implements BugService {
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
         }
 
+        Integer storyId = bug.getStoryId();
+        Story story;
+
+        if(storyId == null || (story = storyService.selectById(storyId)) == null){
+            throw new BadDataException("给定story[" + storyId + "]不存在");
+        }
+
+        if(!story.getStatus().equals(Story.Status.测试中)){
+            throw new BadDataException("给定story[" + storyId + "]不处于测试中状态，无法执行复核通过");
+        }
+
         if(!bug.getStatus().equals(Bug.Status.待复核)){
             throw new BadDataException("给定bug[" + bugId + "]状态无法执行测试人员复核通过操作");
         }
@@ -297,6 +341,17 @@ public class BugServiceImpl implements BugService {
 
         if(bug.getDeveloperId() == null || !bug.getTesterId().equals(userId)){
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
+        }
+
+        Integer storyId = bug.getStoryId();
+        Story story;
+
+        if(storyId == null || (story = storyService.selectById(storyId)) == null){
+            throw new BadDataException("给定story[" + storyId + "]不存在");
+        }
+
+        if(!story.getStatus().equals(Story.Status.测试中)){
+            throw new BadDataException("给定story[" + storyId + "]不处于测试中状态，无法执行复核不通过");
         }
 
         if(!bug.getStatus().equals(Bug.Status.待复核)){

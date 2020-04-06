@@ -2,9 +2,11 @@ package com.edu.neu.zady.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
+import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.StoryMapper;
 import com.edu.neu.zady.pojo.Backlog;
 import com.edu.neu.zady.pojo.Bug;
+import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.pojo.Story;
 import com.edu.neu.zady.service.*;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class StoryServiceImpl implements StoryService {
 
     @Resource
     BugService bugService;
+
+    @Resource
+    RoleService roleService;
 
     @Override
     public Story selectById(Integer storyId) {
@@ -128,7 +133,7 @@ public class StoryServiceImpl implements StoryService {
         uStory.setName(story.getName());
         uStory.setExpectedHours(story.getExpectedHours());
 
-        return storyMapper.updateById(story);
+        return storyMapper.updateById(uStory);
 
     }
 
@@ -197,6 +202,12 @@ public class StoryServiceImpl implements StoryService {
 
         if(!userService.existById(userId)){
             throw new BadDataException("给定user[" + userId + "]不存在");
+        }
+
+
+        Role role = roleService.selectByPIdAndUId(story.getProjectId(), userId);
+        if(role == null || !role.getRole().contains(Role.RoleEnum.developer.name())){
+            throw new NoAuthException("给定user[" + userId + "]不具有给定project[" + story.getProjectId() + "]的developer权限");
         }
 
         if(!story.getStatus().equals(Story.Status.待完成)){
@@ -357,7 +368,7 @@ public class StoryServiceImpl implements StoryService {
         List<Bug> bugList = bugService.selectByStoryId(storyId);
         for (Bug bug:bugList) {
             if(!bug.getStatus().equals(Bug.Status.已完成) && !bug.getStatus().equals(Bug.Status.待确认)){
-                throw new BadDataException("给定story[" + storyId + "]存在未提交修改的BUG，无法修改为待测试状态");
+                throw new BadDataException("给定story[" + storyId + "]存在未提交修改的BUG，无法修改为完成中状态");
             }
         }
 

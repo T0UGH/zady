@@ -26,4 +26,16 @@ public interface BugService {
 
     Integer delete(Integer bugId);
 
+    Integer developNotConfirm(Integer bugId, Integer userId);
+
+    Integer developConfirm(Integer bugId, Integer userId);
+
+    Integer developFinish(Integer bugId, Integer userId);
+
+    Integer testPass(Integer bugId, Integer userId);
+
+    Integer testNotPass(Integer bugId, Integer userId);
+
+
+
 }
