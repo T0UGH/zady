@@ -3,11 +3,13 @@ package com.edu.neu.zady.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.exception.DefaultException;
+import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.SprintMapper;
 import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.pojo.Sprint;
 import com.edu.neu.zady.service.ProjectService;
 import com.edu.neu.zady.service.SprintService;
+import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,11 @@ public class SprintServiceImpl implements SprintService {
             throw new BadDataException("对应项目不存在，请修改项目Id字段");
         }
 
+        //检测是否和当前登陆是同一个project，不是的话无权
+        if(!ParamHolder.sameProject(sprint.getProjectId())){
+            throw new NoAuthException("无给定project[" + sprint.getProjectId() + "]操作权限");
+        }
+
         //若project有currentSprintId，说明有sprint进行中，则报错，
         if(project.getCurrentSprintId()  != null){
             throw new BadDataException("有进行中的sprint,请先结束再创建");
@@ -99,6 +106,17 @@ public class SprintServiceImpl implements SprintService {
 
     @Override
     public Integer update(Sprint sprint) {
+
+        Sprint dbSprint = sprintMapper.selectById(sprint.getSprintId());
+
+        if(dbSprint == null){
+            throw new BadDataException("给定sprint[" + sprint.getSprintId() + "]不存在");
+        }
+
+        if(!ParamHolder.sameProject(dbSprint.getProjectId())){
+            throw new NoAuthException("无给定project[" + sprint.getProjectId() + "]操作权限");
+        }
+
         Sprint updateSprint = new Sprint();
         updateSprint.setSprintId(sprint.getSprintId());
         updateSprint.setName(sprint.getName());
@@ -113,6 +131,10 @@ public class SprintServiceImpl implements SprintService {
         Sprint sprint;
         if((sprint = sprintMapper.selectById(sprintId)) == null){
             throw new BadDataException("该sprint" + sprintId + "并不存在");
+        }
+
+        if(!ParamHolder.sameProject(sprint.getProjectId())){
+            throw new NoAuthException("无给定project[" + sprint.getProjectId() + "]操作权限");
         }
 
         //然后判断状态
