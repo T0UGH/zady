@@ -30,5 +30,7 @@ public interface BacklogService {
 
     Integer delete(Integer backlogId);
 
+    Integer finish(Integer backlogId);
+
 
 }

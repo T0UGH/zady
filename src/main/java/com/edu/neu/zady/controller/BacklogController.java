@@ -3,10 +3,12 @@ package com.edu.neu.zady.controller;
 import com.edu.neu.zady.annotation.Auth;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.exception.DefaultException;
+import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.exception.NotFoundException;
 import com.edu.neu.zady.pojo.Backlog;
 import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.service.BacklogService;
+import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,11 +23,15 @@ public class BacklogController {
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner, Role.RoleEnum.developer, Role.RoleEnum.tester})
     @GetMapping("/backlog/{backlogId}")
     public Backlog getBacklog(@PathVariable Integer backlogId){
+
         Backlog backlog = backlogService.selectById(backlogId);
+
         if(backlog == null){
             throw new NotFoundException("无此项目[" + backlogId + "]");
         }
+
         return backlog;
+
     }
 
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner, Role.RoleEnum.developer, Role.RoleEnum.tester})
@@ -55,46 +61,65 @@ public class BacklogController {
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
     @PostMapping("/backlog")
     public void createBacklog(@RequestBody Backlog backlog){
-        //todo: 去service层验证权限问题
+
+        //因为auth无法读取requestBody，所有只能在这里添加额外的鉴权操作
+        if(!ParamHolder.sameProject(backlog.getProjectId())){
+            throw new NoAuthException("无给定project[" + backlog.getProjectId() + "]权限");
+        }
+
         if(backlogService.insert(backlog) == 0){
             throw new DefaultException("创建项目失败");
         }
+
     }
 
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
     @PutMapping("/backlog")
     public void updateBacklog(@RequestBody Backlog backlog) {
-        //todo: 去service层验证权限问题
+
         if(backlogService.update(backlog) == 0){
             throw new DefaultException("更新项目失败");
         }
+
     }
 
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
     @PostMapping("/currentBacklog/{backlogId}")
     public void addToCurrentSprint(@PathVariable Integer backlogId){
-        //todo: 去service层验证权限问题
+
         if(backlogService.addToCurrentSprint(backlogId) == 0){
             throw new DefaultException("添加到当前迭代失败");
         }
+
     }
 
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
     @DeleteMapping("/currentBacklog/{backlogId}")
     public void removeFromCurrentSprint(@PathVariable Integer backlogId){
-        //todo: 去service层验证权限问题
+
         if(backlogService.removeFromCurrentSprint(backlogId) == 0){
             throw new DefaultException("添加到当前迭代失败");
         }
+
     }
 
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
     @DeleteMapping("/backlog/{backlogId}")
     public void delete(@PathVariable Integer backlogId){
-        //todo: 去service层验证权限问题
+
         if(backlogService.delete(backlogId) == 0){
-            throw new DefaultException("添加到当前迭代失败");
+            throw new DefaultException("删除失败");
         }
+    }
+
+    @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
+    @PutMapping("/backlog/finish/{backlogId}")
+    public void finish(@PathVariable Integer backlogId){
+
+        if(backlogService.finish(backlogId) == 0){
+            throw new DefaultException("完成失败");
+        }
+
     }
 
 }

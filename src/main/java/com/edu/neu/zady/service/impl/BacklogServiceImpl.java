@@ -3,12 +3,16 @@ package com.edu.neu.zady.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
 import com.edu.neu.zady.exception.DefaultException;
+import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.BacklogMapper;
 import com.edu.neu.zady.pojo.Backlog;
 import com.edu.neu.zady.pojo.Project;
+import com.edu.neu.zady.pojo.Story;
 import com.edu.neu.zady.service.BacklogService;
 import com.edu.neu.zady.service.ProjectService;
 import com.edu.neu.zady.service.SprintService;
+import com.edu.neu.zady.service.StoryService;
+import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,9 @@ public class BacklogServiceImpl implements BacklogService {
 
     @Resource
     SprintService sprintService;
+
+    @Resource
+    StoryService storyService;
 
     @Override
     public Backlog selectById(Integer backlogId) {
@@ -118,6 +125,14 @@ public class BacklogServiceImpl implements BacklogService {
 
     @Override
     public Integer update(Backlog backlog) {
+
+        //因为要从数据库读取信息，所以鉴权延迟到service层完成
+        Backlog dbBacklog =  backlogMapper.selectById(backlog.getBacklogId());
+
+        if(!ParamHolder.sameProject(dbBacklog.getProjectId())){
+            throw new NoAuthException("无给定project[" + backlog.getProjectId() + "]权限");
+        }
+
         Backlog uBacklog = new Backlog();
         uBacklog.setBacklogId(backlog.getBacklogId());
         uBacklog.setName(backlog.getName());
@@ -140,6 +155,10 @@ public class BacklogServiceImpl implements BacklogService {
             throw new DefaultException("服务器内部错误，该backlog的project字段缺失，无法更新");
         }
 
+        if(!ParamHolder.sameProject(projectId)){
+            throw new NoAuthException("无给定project[" + backlog.getProjectId() + "]权限");
+        }
+
         Project project = projectService.selectById(projectId);
 
         Integer sprintId = project.getCurrentSprintId();
@@ -149,6 +168,10 @@ public class BacklogServiceImpl implements BacklogService {
 
         if(!sprintService.existById(sprintId)){
             throw new DefaultException("服务器内部错误，该project[" + projectId +"]没有进行中的sprint[" + sprintId + "]");
+        }
+
+        if(!backlog.getStatus().equals(Backlog.Status.未开始)){
+            throw new BadDataException("该backlog[" + backlog + "]不处于未开始状态，设置到进行中");
         }
 
         //然后根据查到的sprintId，来更新backlogId的sprintId字段为这个sprintId，状态为进行中
@@ -164,8 +187,22 @@ public class BacklogServiceImpl implements BacklogService {
     public Integer removeFromCurrentSprint(Integer backlogId) {
 
         Backlog backlog = backlogMapper.selectById(backlogId);
+
         if(backlog == null){
             throw new BadDataException("该backlog不存在，无法更新");
+        }
+
+        Integer projectId = backlog.getProjectId();
+        if(projectId == null){
+            throw new DefaultException("服务器内部错误，该backlog的project字段缺失，无法更新");
+        }
+
+        if(!ParamHolder.sameProject(projectId)){
+            throw new NoAuthException("无给定project[" + backlog.getProjectId() + "]权限");
+        }
+
+        if(!backlog.getStatus().equals(Backlog.Status.进行中)){
+            throw new BadDataException("该backlog[" + backlog + "]不处于进行中状态，设置到未开始");
         }
 
         return backlogMapper.removeFromCurrentSprint(backlogId);
@@ -173,6 +210,64 @@ public class BacklogServiceImpl implements BacklogService {
 
     @Override
     public Integer delete(Integer backlogId) {
+
+        Backlog backlog = backlogMapper.selectById(backlogId);
+
+        if(backlog == null){
+            throw new BadDataException("该backlog不存在，无法更新");
+        }
+
+        Integer projectId = backlog.getProjectId();
+        if(projectId == null){
+            throw new DefaultException("服务器内部错误，该backlog的project字段缺失，无法更新");
+        }
+
+        if(!ParamHolder.sameProject(projectId)){
+            throw new NoAuthException("无给定project[" + backlog.getProjectId() + "]权限");
+        }
+
+        if(!backlog.getStatus().equals(Backlog.Status.未开始)){
+            throw new BadDataException("该backlog[" + backlogId + "]状态不是未开始，无法删除");
+        }
+
         return backlogMapper.deleteById(backlogId);
     }
+
+    public Integer finish(Integer backlogId) {
+
+        Backlog backlog = backlogMapper.selectById(backlogId);
+
+        if(backlog == null){
+            throw new BadDataException("该backlog不存在，无法更新");
+        }
+
+        Integer projectId = backlog.getProjectId();
+        if(projectId == null){
+            throw new DefaultException("服务器内部错误，该backlog的project字段缺失，无法更新");
+        }
+
+        if(!ParamHolder.sameProject(projectId)){
+            throw new NoAuthException("无给定project[" + backlog.getProjectId() + "]权限");
+        }
+
+        //必须是进行中状态的才能完成
+        if(!backlog.getStatus().equals(Backlog.Status.进行中)){
+            throw new BadDataException("该backlog[" + backlogId + "]状态不是进行中，无法完成");
+        }
+
+        //这个backlog对应的所有story都完成才能完成
+        List<Story> storyList = storyService.selectByBacklogId(backlogId);
+        for (Story story: storyList) {
+            if(!story.getStatus().equals(Story.Status.已完成)){
+                throw new BadDataException("该backlog[" + backlogId + "]存在未完成的用户故事，无法设置为已完成状态");
+            }
+        }
+
+        Backlog uBacklog = new Backlog();
+        uBacklog.setBacklogId(backlogId);
+        uBacklog.setStatus(Backlog.Status.已完成);
+        return backlogMapper.updateById(uBacklog);
+
+    }
+
 }
