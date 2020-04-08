@@ -1,4 +1,4 @@
-package com.edu.neu.zady;
+package com.edu.neu.zady.controller;
 
 import com.edu.neu.zady.annotation.Auth;
 import com.edu.neu.zady.exception.NotFoundException;
@@ -50,6 +50,8 @@ public class StatisticController {
         return dashBoard;
 
     }
+
+    @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner, Role.RoleEnum.developer, Role.RoleEnum.tester})
     @GetMapping("/sprint/{sprintId}/bornout")
     public List<Bornout> getBornoutBySprint(@PathVariable Integer sprintId) {
 
