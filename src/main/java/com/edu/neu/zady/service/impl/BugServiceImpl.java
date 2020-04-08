@@ -2,6 +2,7 @@ package com.edu.neu.zady.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
+import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.BugMapper;
 import com.edu.neu.zady.pojo.Bug;
 import com.edu.neu.zady.pojo.Story;
@@ -9,6 +10,7 @@ import com.edu.neu.zady.service.BacklogService;
 import com.edu.neu.zady.service.BugService;
 import com.edu.neu.zady.service.SprintService;
 import com.edu.neu.zady.service.StoryService;
+import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,6 +158,10 @@ public class BugServiceImpl implements BugService {
             throw new BadDataException("给定story[" + storyId + "]不处于测试中状态，无法测试");
         }
 
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
+        }
+
         bug.setProjectId(story.getProjectId());
         bug.setBacklogId(story.getBacklogId());
         bug.setSprintId(story.getSprintId());
@@ -169,6 +175,15 @@ public class BugServiceImpl implements BugService {
 
     @Override
     public Integer update(Bug bug) {
+
+        Bug dbBug = bugMapper.selectById(bug.getBugId());
+        if(dbBug == null){
+            throw new BadDataException("给定bug[" + bug.getBugId() + "]不存在");
+        }
+
+        if(!ParamHolder.sameProject(dbBug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + dbBug.getProjectId() + "]");
+        }
 
         Bug uBug = new Bug();
         uBug.setBugId(bug.getBugId());
@@ -194,6 +209,10 @@ public class BugServiceImpl implements BugService {
             throw new BadDataException("给定bug[" + bugId + "]状态无法删除");
         }
 
+        if(!ParamHolder.sameProject(bug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
+        }
+
         return bugMapper.deleteById(bugId);
 
     }
@@ -209,6 +228,10 @@ public class BugServiceImpl implements BugService {
 
         if(bug.getDeveloperId() == null || !bug.getDeveloperId().equals(userId)){
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
+        }
+
+        if(!ParamHolder.sameProject(bug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
         }
 
         Integer storyId = bug.getStoryId();
@@ -244,6 +267,10 @@ public class BugServiceImpl implements BugService {
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
         }
 
+        if(!ParamHolder.sameProject(bug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
+        }
+
         Integer storyId = bug.getStoryId();
         Story story;
 
@@ -275,6 +302,10 @@ public class BugServiceImpl implements BugService {
 
         if(bug.getDeveloperId() == null || !bug.getDeveloperId().equals(userId)){
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
+        }
+
+        if(!ParamHolder.sameProject(bug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
         }
 
         Integer storyId = bug.getStoryId();
@@ -310,6 +341,10 @@ public class BugServiceImpl implements BugService {
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
         }
 
+        if(!ParamHolder.sameProject(bug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
+        }
+
         Integer storyId = bug.getStoryId();
         Story story;
 
@@ -341,6 +376,10 @@ public class BugServiceImpl implements BugService {
 
         if(bug.getDeveloperId() == null || !bug.getTesterId().equals(userId)){
             throw new BadDataException("给定user[" +userId + "]无权操作此bug[" + bugId + "]");
+        }
+
+        if(!ParamHolder.sameProject(bug.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
         }
 
         Integer storyId = bug.getStoryId();

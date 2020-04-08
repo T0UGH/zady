@@ -57,7 +57,7 @@ public class StoryController {
 
     @PostMapping("/story")
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
-    public void insertStory(Story story){
+    public void insertStory(@RequestBody Story story){
 
         if(storyService.insert(story) == 0){
             throw new DefaultException("创建故事失败");
@@ -67,7 +67,7 @@ public class StoryController {
 
     @PutMapping("/story")
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
-    public void updateStory(Story story){
+    public void updateStory(@RequestBody Story story){
 
         if(storyService.update(story) == 0){
             throw new DefaultException("更新故事失败");
