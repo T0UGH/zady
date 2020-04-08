@@ -7,6 +7,7 @@ import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.SprintMapper;
 import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.pojo.Sprint;
+import com.edu.neu.zady.service.DashBoardService;
 import com.edu.neu.zady.service.ProjectService;
 import com.edu.neu.zady.service.SprintService;
 import com.edu.neu.zady.util.ParamHolder;
@@ -26,6 +27,9 @@ public class SprintServiceImpl implements SprintService {
 
     @Resource
     ProjectService projectService;
+
+    @Resource
+    DashBoardService dashBoardService;
 
 
     @Override
@@ -98,7 +102,11 @@ public class SprintServiceImpl implements SprintService {
 
         //更新project的currentSprintId为它
         if(projectService.updateCurrentSprintIdAndAddSprintNum(sprint.getProjectId(), sprint.getSprintId()) == 0){
-            throw new DefaultException("服务器内部错误，无法设计当前sprint");
+            throw new DefaultException("服务器内部错误，无法更新当前sprint");
+        }
+
+        if(dashBoardService.insert(sprint.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法创建当前sprint[" + sprint.getSprintId() + "]对应的dashBoard");
         }
 
         return rv;

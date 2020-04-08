@@ -2,6 +2,7 @@ package com.edu.neu.zady.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
+import com.edu.neu.zady.exception.DefaultException;
 import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.StoryMapper;
 import com.edu.neu.zady.pojo.Backlog;
@@ -38,6 +39,9 @@ public class StoryServiceImpl implements StoryService {
 
     @Resource
     RoleService roleService;
+
+    @Resource
+    DashBoardService dashBoardService;
 
     @Override
     public Story selectById(Integer storyId) {
@@ -192,6 +196,10 @@ public class StoryServiceImpl implements StoryService {
 
         story.setStatus(Story.Status.待完成);
 
+        if(dashBoardService.addStoryNum(story.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该story,[" + storyId + "],更新dashboard信息");
+        }
+
         return storyMapper.updateById(story);
     }
 
@@ -213,6 +221,10 @@ public class StoryServiceImpl implements StoryService {
         }
 
         story.setStatus(Story.Status.待导入);
+
+        if(dashBoardService.subStoryNum(story.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该story,[" + storyId + "],更新dashboard信息");
+        }
 
         return storyMapper.updateById(story);
 
@@ -396,6 +408,16 @@ public class StoryServiceImpl implements StoryService {
         story.setStatus(Story.Status.已完成);
         story.setFinishedDate(new Date());
         story.setCurrentHours(story.getCurrentHours() + useHours);
+
+        if(story.getExpectedHours() >= story.getCurrentHours()){
+            if(dashBoardService.addInTimeStoryNum(story.getSprintId()) == 0){
+                throw new DefaultException("服务器内部错误，无法为该story,[" + storyId + "],更新dashboard信息");
+            }
+        }else{
+            if(dashBoardService.addOutTimeStoryNum(story.getSprintId()) == 0){
+                throw new DefaultException("服务器内部错误，无法为该story,[" + storyId + "],更新dashboard信息");
+            }
+        }
 
         return storyMapper.updateById(story);
 

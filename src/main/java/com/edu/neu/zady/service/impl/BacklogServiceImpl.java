@@ -8,10 +8,7 @@ import com.edu.neu.zady.mapper.BacklogMapper;
 import com.edu.neu.zady.pojo.Backlog;
 import com.edu.neu.zady.pojo.Project;
 import com.edu.neu.zady.pojo.Story;
-import com.edu.neu.zady.service.BacklogService;
-import com.edu.neu.zady.service.ProjectService;
-import com.edu.neu.zady.service.SprintService;
-import com.edu.neu.zady.service.StoryService;
+import com.edu.neu.zady.service.*;
 import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +31,9 @@ public class BacklogServiceImpl implements BacklogService {
 
     @Resource
     StoryService storyService;
+
+    @Resource
+    DashBoardService dashBoardService;
 
     @Override
     public Backlog selectById(Integer backlogId) {
@@ -174,13 +174,21 @@ public class BacklogServiceImpl implements BacklogService {
             throw new BadDataException("该backlog[" + backlog + "]不处于未开始状态，设置到进行中");
         }
 
+
+
         //然后根据查到的sprintId，来更新backlogId的sprintId字段为这个sprintId，状态为进行中
         Backlog uBacklog = new Backlog();
         uBacklog.setBacklogId(backlogId);
         uBacklog.setSprintId(sprintId);
         uBacklog.setStatus(Backlog.Status.进行中);
 
-        return backlogMapper.updateById(uBacklog);
+        int rv = backlogMapper.updateById(uBacklog);
+
+        if(dashBoardService.addBacklogNum(sprintId) == 0){
+            throw new DefaultException("服务器内部错误，无法为该backlog,[" + backlogId + "],更新dashboard信息");
+        }
+
+        return rv;
     }
 
     @Override
@@ -205,7 +213,15 @@ public class BacklogServiceImpl implements BacklogService {
             throw new BadDataException("该backlog[" + backlog + "]不处于进行中状态，设置到未开始");
         }
 
-        return backlogMapper.removeFromCurrentSprint(backlogId);
+        Integer sprintId = backlog.getSprintId();
+
+        int rv =  backlogMapper.removeFromCurrentSprint(backlogId);
+
+        if(dashBoardService.subBacklogNum(sprintId) == 0){
+            throw new DefaultException("服务器内部错误，无法为该backlog,[" + backlogId + "],更新dashboard信息");
+        }
+
+        return rv;
     }
 
     @Override
@@ -266,8 +282,13 @@ public class BacklogServiceImpl implements BacklogService {
         Backlog uBacklog = new Backlog();
         uBacklog.setBacklogId(backlogId);
         uBacklog.setStatus(Backlog.Status.已完成);
-        return backlogMapper.updateById(uBacklog);
+        int rv =  backlogMapper.updateById(uBacklog);
 
+        if(dashBoardService.addFinishedBacklogNum(backlog.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该backlog,[" + backlogId + "],更新dashboard信息");
+        }
+
+        return rv;
     }
 
 }

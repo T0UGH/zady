@@ -2,14 +2,12 @@ package com.edu.neu.zady.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.exception.BadDataException;
+import com.edu.neu.zady.exception.DefaultException;
 import com.edu.neu.zady.exception.NoAuthException;
 import com.edu.neu.zady.mapper.BugMapper;
 import com.edu.neu.zady.pojo.Bug;
 import com.edu.neu.zady.pojo.Story;
-import com.edu.neu.zady.service.BacklogService;
-import com.edu.neu.zady.service.BugService;
-import com.edu.neu.zady.service.SprintService;
-import com.edu.neu.zady.service.StoryService;
+import com.edu.neu.zady.service.*;
 import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +30,9 @@ public class BugServiceImpl implements BugService {
 
     @Resource
     StoryService storyService;
+
+    @Resource
+    DashBoardService dashBoardService;
 
     @Override
     public Bug selectById(Integer bugId) {
@@ -169,7 +170,13 @@ public class BugServiceImpl implements BugService {
         bug.setDeveloperId(story.getDeveloperId());
         bug.setTesterId(story.getTesterId());
 
-        return bugMapper.insert(bug);
+        int rv =  bugMapper.insert(bug);
+
+        if(dashBoardService.addBugNum(bug.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该bug,[" + bug.getBugId() + "],更新dashboard信息");
+        }
+
+        return rv;
 
     }
 
@@ -213,6 +220,10 @@ public class BugServiceImpl implements BugService {
             throw new NoAuthException("无权操作此project[" + bug.getProjectId() + "]");
         }
 
+        if(dashBoardService.subBugNum(bug.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该bug,[" + bug.getBugId() + "],更新dashboard信息");
+        }
+
         return bugMapper.deleteById(bugId);
 
     }
@@ -250,6 +261,11 @@ public class BugServiceImpl implements BugService {
         }
 
         bug.setStatus(Bug.Status.已完成);
+
+        if(dashBoardService.addSolvedBugNum(bug.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该bug,[" + bug.getBugId() + "],更新dashboard信息");
+        }
+
         return bugMapper.updateById(bug);
 
     }
@@ -358,6 +374,10 @@ public class BugServiceImpl implements BugService {
 
         if(!bug.getStatus().equals(Bug.Status.待复核)){
             throw new BadDataException("给定bug[" + bugId + "]状态无法执行测试人员复核通过操作");
+        }
+
+        if(dashBoardService.addSolvedBugNum(bug.getSprintId()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该bug,[" + bug.getBugId() + "],更新dashboard信息");
         }
 
         bug.setStatus(Bug.Status.已完成);

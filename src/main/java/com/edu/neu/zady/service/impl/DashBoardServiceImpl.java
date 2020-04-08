@@ -87,6 +87,16 @@ public class DashBoardServiceImpl implements DashBoardService {
     }
 
     @Override
+    public Integer subBacklogNum(Integer sprintId) {
+
+        DashBoard dashBoard = randomDashBoard(sprintId);
+
+        dashBoard.setBacklogNum(dashBoard.getBacklogNum() - 1);
+
+        return dashBoardMapper.updateById(dashBoard);
+    }
+
+    @Override
     public Integer addFinishedBacklogNum(Integer sprintId) {
 
         DashBoard dashBoard = randomDashBoard(sprintId);
@@ -103,6 +113,17 @@ public class DashBoardServiceImpl implements DashBoardService {
         DashBoard dashBoard = randomDashBoard(sprintId);
 
         dashBoard.setStoryNum(dashBoard.getStoryNum() + 1);
+
+        return dashBoardMapper.updateById(dashBoard);
+
+    }
+
+    @Override
+    public Integer subStoryNum(Integer sprintId) {
+
+        DashBoard dashBoard = randomDashBoard(sprintId);
+
+        dashBoard.setStoryNum(dashBoard.getStoryNum() - 1);
 
         return dashBoardMapper.updateById(dashBoard);
 
@@ -138,6 +159,15 @@ public class DashBoardServiceImpl implements DashBoardService {
     }
 
     @Override
+    public Integer subBugNum(Integer sprintId) {
+        DashBoard dashBoard = randomDashBoard(sprintId);
+
+        dashBoard.setBugNum(dashBoard.getBugNum() - 1);
+
+        return dashBoardMapper.updateById(dashBoard);
+    }
+
+    @Override
     public Integer addSolvedBugNum(Integer sprintId) {
         DashBoard dashBoard = randomDashBoard(sprintId);
 
@@ -145,6 +175,8 @@ public class DashBoardServiceImpl implements DashBoardService {
 
         return dashBoardMapper.updateById(dashBoard);
     }
+
+
 
     private int randomSlot(){
         Random random = new Random();
