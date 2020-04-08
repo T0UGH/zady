@@ -43,6 +43,9 @@ public class StoryServiceImpl implements StoryService {
     @Resource
     DashBoardService dashBoardService;
 
+    @Resource
+    BornoutService bornoutService;
+
     @Override
     public Story selectById(Integer storyId) {
 
@@ -408,6 +411,10 @@ public class StoryServiceImpl implements StoryService {
         story.setStatus(Story.Status.已完成);
         story.setFinishedDate(new Date());
         story.setCurrentHours(story.getCurrentHours() + useHours);
+
+        if(bornoutService.addBornout(story.getSprintId(), new Date()) == 0){
+            throw new DefaultException("服务器内部错误，无法为该story,[" + storyId + "],更新bornout信息");
+        }
 
         if(story.getExpectedHours() >= story.getCurrentHours()){
             if(dashBoardService.addInTimeStoryNum(story.getSprintId()) == 0){
