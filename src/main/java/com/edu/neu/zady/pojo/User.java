@@ -1,6 +1,5 @@
 package com.edu.neu.zady.pojo;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
@@ -28,8 +27,6 @@ public class User {
     private String password;
 
     private Integer defaultProjectId;
-
-    private Integer defaultSprintId;
 
     @TableField(exist = false)
     private String token;

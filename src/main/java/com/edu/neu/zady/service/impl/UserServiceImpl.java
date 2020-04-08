@@ -17,7 +17,6 @@ import java.util.List;
 
 @Transactional
 @Service
-//todo: current_sprint_id到底有没有用，没有用的话就去掉
 public class UserServiceImpl implements UserService {
 
     @Value("${zady.default-avatar}")
