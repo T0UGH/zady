@@ -64,6 +64,7 @@ public class SprintController {
     public void startSprint(@RequestBody Sprint sprint){
 
         //同一个项目即可，放到service里完成鉴权
+
         if(sprintService.start(sprint) == 0){
             throw new DefaultException("给定sprint[" + sprint.getName() + "]无法开始");
         }
@@ -75,6 +76,7 @@ public class SprintController {
     public void updateSprint(@RequestBody Sprint sprint){
 
         //同一个项目即可，放到service里完成鉴权
+
         if(sprintService.update(sprint) == 0){
             throw new DefaultException("给定sprint[" + sprint.getSprintId() + "]无法更新");
         }
@@ -85,8 +87,8 @@ public class SprintController {
     @DeleteMapping("/sprint/{sprintId}")
     public void endSprint(@PathVariable Integer sprintId){
 
-        //todo: 分析鉴权流程
         //同一个项目即可，放到service里完成鉴权
+
         if(sprintService.end(sprintId) == 0){
             throw new DefaultException("给定sprint[" + sprintId + "]无法更新");
         }

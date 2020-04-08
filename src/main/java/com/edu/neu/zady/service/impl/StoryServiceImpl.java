@@ -9,6 +9,7 @@ import com.edu.neu.zady.pojo.Bug;
 import com.edu.neu.zady.pojo.Role;
 import com.edu.neu.zady.pojo.Story;
 import com.edu.neu.zady.service.*;
+import com.edu.neu.zady.util.ParamHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,6 +118,10 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定backlog[" + backlogId + "]状态不支持拆分故事操作");
         }
 
+        if(!ParamHolder.sameProject(backlog.getProjectId())){
+            throw new NoAuthException("无权操作给定项目[" + backlog.getProjectId() + "]");
+        }
+
         story.setProjectId(backlog.getProjectId());
         story.setSprintId(backlog.getSprintId());
         story.setStatus(Story.Status.待导入);
@@ -127,6 +132,16 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public Integer update(Story story) {
+
+        Story dbStory = storyMapper.selectById(story.getStoryId());
+
+        if(dbStory == null){
+            throw new BadDataException("给定story[" + story.getStoryId() + "]不存在");
+        }
+
+        if(ParamHolder.sameProject(dbStory.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + dbStory.getProjectId() + "]");
+        }
 
         Story uStory = new Story();
         uStory.setStoryId(story.getStoryId());
@@ -150,6 +165,10 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]状态不支持删除操作");
         }
 
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
+        }
+
         return storyMapper.deleteById(storyId);
 
     }
@@ -165,6 +184,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(!story.getStatus().equals(Story.Status.待导入)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持导入操作");
+        }
+
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
         }
 
         story.setStatus(Story.Status.待完成);
@@ -185,6 +208,10 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]状态不支持打回操作");
         }
 
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
+        }
+
         story.setStatus(Story.Status.待导入);
 
         return storyMapper.updateById(story);
@@ -202,6 +229,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(!userService.existById(userId)){
             throw new BadDataException("给定user[" + userId + "]不存在");
+        }
+
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
         }
 
 
@@ -237,6 +268,10 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + storyId + "]状态不支持开发人员撤销领取操作");
         }
 
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
+        }
+
         return storyMapper.developReturn(storyId);
     }
 
@@ -253,6 +288,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(!story.getStatus().equals(Story.Status.完成中)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持开发完成操作");
+        }
+
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
         }
 
         //判断有没有bug，只有没有bug或者所有的bug全都是待复核或已完成状态，才能提交
@@ -280,6 +319,11 @@ public class StoryServiceImpl implements StoryService {
 
         if(!userService.existById(userId)){
             throw new BadDataException("给定user[" + userId + "]不存在");
+        }
+
+
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
         }
 
         if(!story.getStatus().equals(Story.Status.待测试)){
@@ -310,6 +354,10 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定user[" + userId + "]无权执行撤销领取操作");
         }
 
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
+        }
+
         if(!story.getStatus().equals(Story.Status.测试中)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持测试人员撤销领取操作");
         }
@@ -328,6 +376,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(story.getTesterId() == null || !story.getTesterId().equals(userId)){
             throw new BadDataException("给定user[" + userId + "]无权执行通过测试操作");
+        }
+
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
         }
 
         if(!story.getStatus().equals(Story.Status.测试中)){
@@ -363,6 +415,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(!story.getStatus().equals(Story.Status.测试中)){
             throw new BadDataException("给定story[" + storyId + "]状态不支持未通过测试操作");
+        }
+
+        if(!ParamHolder.sameProject(story.getProjectId())){
+            throw new NoAuthException("无权操作此project[" + story.getProjectId() + "]");
         }
 
         List<Bug> bugList = bugService.selectByStoryId(storyId);
