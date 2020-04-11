@@ -43,6 +43,7 @@ public class TokenServiceImpl implements TokenService {
             Role roleObj = roleService.selectByPIdAndUId(projectId, user.getUserId());
             if(roleObj != null){
                 role = roleObj.getRole();
+                user.setRole(roleObj);
             }else{
                 projectId = null;
             }
