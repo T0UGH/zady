@@ -213,6 +213,8 @@ public class BacklogServiceImpl implements BacklogService {
             throw new BadDataException("该backlog[" + backlog + "]不处于进行中状态，设置到未开始");
         }
 
+        //todo: 不能如此简单地将backlog切换到未开始，还需要判断它对应的story情况
+
         Integer sprintId = backlog.getSprintId();
 
         int rv =  backlogMapper.removeFromCurrentSprint(backlogId);

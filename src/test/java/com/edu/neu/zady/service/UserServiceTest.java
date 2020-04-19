@@ -37,10 +37,10 @@ class UserServiceTest extends ZadyApplicationTests {
     void register(){
 
         User user = new User();
-        user.setName("testMan");
+        user.setName("小张");
 
         user.setPassword("Neusoft123");
-        user.setEmail("neusoft1@neusoft.com");
+        user.setEmail("xiaozhang@neusoft.com");
         userService.register(user);
     }
 

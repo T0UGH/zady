@@ -60,7 +60,7 @@ public class RoleServiceImpl implements RoleService, ApplicationContextAware {
     @Override
     public Role selectByPIdAndUId(Integer projectId, Integer userId) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Role::getUserId, userId).eq(Role::getProjectId, projectId).eq(Role::getInvite, false);
+        queryWrapper.eq(Role::getUserId, userId).eq(Role::getProjectId, projectId);
         return roleMapper.selectOne(queryWrapper);
     }
 

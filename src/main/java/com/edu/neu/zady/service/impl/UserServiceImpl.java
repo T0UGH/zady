@@ -4,6 +4,7 @@ package com.edu.neu.zady.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.edu.neu.zady.mapper.UserMapper;
 import com.edu.neu.zady.pojo.User;
+import com.edu.neu.zady.service.RoleService;
 import com.edu.neu.zady.service.UserService;
 import com.edu.neu.zady.util.Encoder;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Iterator;
 import java.util.List;
 
 @Transactional
@@ -26,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     UserMapper userMapper;
+
+    @Resource
+    RoleService roleService;
 
     @Override
     public User selectById(Integer id) {
@@ -55,6 +60,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer updateDefaultProjectIdToNull(Integer id) {
         return userMapper.updateDefaultProjectIdToNull(id);
+    }
+
+    @Override
+    public List<User> selectForInviteByQueryStr(String queryStr, Integer projectId) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(User::getEmail, queryStr).or().like(User::getName, queryStr);
+        List<User> userList = userMapper.selectList(queryWrapper);
+        //使用迭代器的删除方法删除
+        userList.removeIf(user -> roleService.existByPIdAndUId(projectId, user.getUserId()));
+        return userList;
     }
 
     @Override

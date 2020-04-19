@@ -61,6 +61,15 @@ public class UserController {
         return userService.selectByQueryStr(queryStr);
     }
 
+    /**
+     * 通过某个关键词搜索用户并且屏蔽掉已经加入的角色
+     * */
+    @Auth(needProject = true, sameProject = true)
+    @GetMapping("/usersForInvite")
+    public List<User> getUsersForInvite(String queryStr, Integer projectId){
+        return userService.selectForInviteByQueryStr(queryStr, projectId);
+    }
+
 
     /**
      * 用户修改自己的基本信息

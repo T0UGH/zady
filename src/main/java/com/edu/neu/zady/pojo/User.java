@@ -23,7 +23,7 @@ public class User {
     @URL
     private String avatar;
 
-    @NotBlank
+    // todo: 这个字段不能返回
     private String password;
 
     private Integer defaultProjectId;

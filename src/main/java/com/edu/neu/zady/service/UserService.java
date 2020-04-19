@@ -23,4 +23,6 @@ public interface UserService {
     Boolean existById(Integer id);
 
     Integer updateDefaultProjectIdToNull(Integer id);
+
+    List<User> selectForInviteByQueryStr(String queryStr, Integer projectId);
 }

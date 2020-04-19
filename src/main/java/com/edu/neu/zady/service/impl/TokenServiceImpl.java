@@ -51,7 +51,7 @@ public class TokenServiceImpl implements TokenService {
 
         String token = TokenGenerator.generate(user.getUserId(), projectId, role);
         user.setToken(token);
-
+        user.setPassword(null);
         return user;
     }
 
