@@ -47,7 +47,7 @@ public class SprintController {
 
     @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner, Role.RoleEnum.developer, Role.RoleEnum.tester})
     @GetMapping("/currentSprint/{projectId}")
-    public Sprint getCurrentSprintList(@PathVariable Integer projectId){
+    public Sprint getCurrentSprint(@PathVariable Integer projectId){
 
         Sprint sprint = sprintService.selectCurrentByProjectId(projectId);
 

@@ -55,13 +55,12 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setMasterId(currentUserId);
-
+        projectMapper.insert(project);
 
         //主键填入user表的defaultProjectId属性
-        int rv = projectMapper.insert(project);
         if(user.getDefaultProjectId() == null){
             user.setDefaultProjectId(project.getProjectId());
-            return userService.update(user);
+            userService.update(user);
         }
 
         //向role表中插入一条记录

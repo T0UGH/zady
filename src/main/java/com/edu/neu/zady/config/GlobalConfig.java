@@ -29,6 +29,8 @@ public class GlobalConfig implements WebMvcConfigurer {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 
+        converters.remove(4);
+        converters.remove(4);
         converters.add(0, new MappingJackson2HttpMessageConverter());
 
     }

@@ -95,6 +95,16 @@ public class StoryController {
 
     }
 
+    @PutMapping("/story/{storyId}/return")
+    @Auth(sameProject = true, role = {Role.RoleEnum.master, Role.RoleEnum.owner})
+    public void returnStory(@PathVariable Integer storyId){
+
+        if(storyService.returnStory(storyId) == 0){
+            throw new DefaultException("打回故事失败");
+        }
+
+    }
+
     @PutMapping("/story/{storyId}/developReceive/{userId}")
     @Auth(sameProject = true, role = {Role.RoleEnum.developer})
     public void developReceive(@PathVariable Integer storyId, @PathVariable Integer userId){
@@ -199,6 +209,11 @@ public class StoryController {
             throw new DefaultException("测试人员不通过故事失败");
         }
 
+    }
+
+    @GetMapping("/message/{storyId}")
+    public String message(@PathVariable Integer storyId){
+        return "一条消息" + storyId;
     }
 
 }

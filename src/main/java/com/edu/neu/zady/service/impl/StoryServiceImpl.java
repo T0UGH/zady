@@ -146,7 +146,7 @@ public class StoryServiceImpl implements StoryService {
             throw new BadDataException("给定story[" + story.getStoryId() + "]不存在");
         }
 
-        if(ParamHolder.sameProject(dbStory.getProjectId())){
+        if(!ParamHolder.sameProject(dbStory.getProjectId())){
             throw new NoAuthException("无权操作此project[" + dbStory.getProjectId() + "]");
         }
 
